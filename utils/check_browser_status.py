@@ -56,6 +56,7 @@ def kill_browser_process(browser: str):
         try:
             proc_name = proc.name()
             if proc_name and proc_name.lower() in all_names:
+                print(f"[!] Killing process: {proc_name} (PID: {proc.pid})")
                 proc.kill()
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
