@@ -9,6 +9,18 @@ BROWSERS = {
 
 
 def is_browser_running(browser: str) -> bool:
+    """Check if a specified browser is currently running.
+
+    Args:
+        browser (str): The name of the browser to check.
+
+    Raises:
+        ValueError: If the browser is unknown or not supported.
+
+    Returns:
+        bool: True if the browser is running, False otherwise.
+    """
+
     names = BROWSERS.get(browser, [])
     if not names:
         raise ValueError(f"Error: unknown browser {browser}")
@@ -24,6 +36,16 @@ def is_browser_running(browser: str) -> bool:
 
 
 def kill_browser_process(browser: str):
+    """
+    Kills all processes associated with the specified browser by matching process names.
+
+    Args:
+        browser (str): The name of the browser to kill processes for.
+
+    Raises:
+        ValueError: If the browser is unknown or not supported.
+    """
+
     targets = BROWSERS.get(browser, [])
     if not targets:
         raise ValueError(f"Error: unknown browser {browser}")
