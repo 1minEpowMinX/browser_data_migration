@@ -229,7 +229,6 @@ def find_latest_snss_file(directory: str) -> Optional[Path]:
     Returns:
         Optional[Path]: Path to the newest SNSS file, or None if not found.
     """
-
     session_path = Path(directory)
     if not session_path.exists():
         return None
