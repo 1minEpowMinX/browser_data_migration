@@ -111,6 +111,10 @@ def parse_navigation_entry(buf: io.BytesIO, tab: ChromiumTab) -> None:
         buf (io.BytesIO): A BytesIO object containing the binary payload data.
         tab (Tab): The tab object to which the navigation entry should be appended.
                    If the tab lacks an ID or index, they will be set from the payload.
+
+    Raises:
+        ValueError: If the payload cannot be parsed correctly.
+        ValueError: If the tab is None.
     """
 
     try:
@@ -166,6 +170,10 @@ def parse_snss_file(path: Path | str) -> ChromiumWindow:
 
     Args:
         path (Path | str): Path to the SNSS file to parse.
+
+    Raises:
+        ValueError: If the file does not start with the expected "SNSS" signature.
+        ValueError: If the SNSS version is not supported (currently only version 3 is supported).
 
     Returns:
         ChromiumWindow: A specific ChromiumWindow object containing the parsed Tab objects with their navigation entries.
