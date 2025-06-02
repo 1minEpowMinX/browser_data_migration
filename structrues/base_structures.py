@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, List, TypeVar, Generic
+from typing import Generic, List, Optional, TypeVar
 
 
 # Base class definitions

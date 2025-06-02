@@ -1,8 +1,7 @@
-import psutil
 from datetime import datetime
-from typing import Dict, Union, Any
+from typing import Dict
 
-from utils import json_handler
+import psutil
 
 # Mapping of browser names to process names (may be different on different platforms)
 BROWSERS = {
@@ -12,27 +11,13 @@ BROWSERS = {
 }
 
 
-def is_browser_running(process_names: Dict[str, list[str]]) -> bool:
+def is_browser_running(browser: str) -> bool:
+    names = BROWSERS.get(browser, [])
+    all_names = [name.lower() for name in names]
     for proc in psutil.process_iter(["name"]):
         try:
-            if proc.info["name"] and proc.info["name"].lower() in [
-                name.lower() for name in process_names
-            ]:
+            if proc.info["name"] and proc.info["name"].lower() in all_names:
                 return True
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
     return False
-
-
-def generate_report() -> Dict[str, Union[str, Dict[str, Dict[str, Any]]]]: # TODO: implement this function in different way
-    report = {"timestamp": datetime.now().isoformat(), "browsers": {}}
-
-    for browser, process_names in BROWSERS.items():
-        report["browsers"][browser] = {"running": is_browser_running(process_names)}
-
-    return report
-
-
-def save_report_to_json(report, filename="browser_status_report.json"):
-    json_handler.save_to_json(report, filename)
-

@@ -1,7 +1,6 @@
 import io
-import sys
 import struct
-
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -112,6 +111,10 @@ def parse_navigation_entry(buf: io.BytesIO, tab: ChromiumTab) -> None:
         buf (io.BytesIO): A BytesIO object containing the binary payload data.
         tab (Tab): The tab object to which the navigation entry should be appended.
                    If the tab lacks an ID or index, they will be set from the payload.
+
+    Raises:
+        ValueError: If the payload cannot be parsed correctly.
+        ValueError: If the tab is None.
     """
 
     try:
@@ -168,6 +171,10 @@ def parse_snss_file(path: Path | str) -> ChromiumWindow:
     Args:
         path (Path | str): Path to the SNSS file to parse.
 
+    Raises:
+        ValueError: If the file does not start with the expected "SNSS" signature.
+        ValueError: If the SNSS version is not supported (currently only version 3 is supported).
+
     Returns:
         ChromiumWindow: A specific ChromiumWindow object containing the parsed Tab objects with their navigation entries.
     """
@@ -199,7 +206,7 @@ def parse_snss_file(path: Path | str) -> ChromiumWindow:
                     if tab_id not in tabs:
                         tabs[tab_id] = ChromiumTab(entries=[], tab_id=tab_id)
                     parse_navigation_entry(buf, tabs[tab_id])
-                    
+
                 case 7:  # kCommandSetSelectedNavigationIndex
                     tab_id = read_uint32(buf)
                     selected_index = read_uint32(buf)
@@ -222,17 +229,11 @@ def find_latest_snss_file(directory: str) -> Optional[Path]:
     Returns:
         Optional[Path]: Path to the newest SNSS file, or None if not found.
     """
-    
     session_path = Path(directory)
-
     if not session_path.exists():
         return None
 
-    session_files = []
-
-    for file_path in session_path.rglob("Session_*"):
-        session_files.append(file_path)
-
+    session_files = list(session_path.rglob("Session_*"))
     if not session_files:
         return None
 
