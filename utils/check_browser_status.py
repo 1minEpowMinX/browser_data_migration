@@ -26,9 +26,10 @@ def is_browser_running(browser: str) -> bool:
         raise ValueError(f"Error: unknown browser {browser}")
 
     all_names = [name.lower() for name in names]
-    for proc in psutil.process_iter(["name"]):
+    for proc in psutil.process_iter():
         try:
-            if proc.info["name"] and proc.info["name"].lower() in all_names:
+            proc_name = proc.name()
+            if proc_name and proc_name.lower() in all_names:
                 return True
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
@@ -51,9 +52,10 @@ def kill_browser_process(browser: str):
         raise ValueError(f"Error: unknown browser {browser}")
 
     all_names = [name.lower() for name in targets]
-    for proc in psutil.process_iter(["name"]):
+    for proc in psutil.process_iter():
         try:
-            if proc.info["name"] and proc.info["name"].lower() in all_names:
+            proc_name = proc.name()
+            if proc_name and proc_name.lower() in all_names:
                 proc.kill()
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
