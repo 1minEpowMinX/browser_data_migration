@@ -2,59 +2,45 @@ from os import path
 import platform
 from typing import Optional
 
+CHROME_PATH = (r"%LOCALAPPDATA%/Google/Chrome/", "~/.config/google-chrome/")
+EDGE_PATH = (r"%LOCALAPPDATA%/Microsoft/Edge/", "~/.config/microsoft-edge/")
+FIREFOX_PATH = (r"%APPDATA%/Mozilla/", "~/snap/firefox/common/.mozilla/")
 
-def get_chrome_profile_path() -> Optional[str]:
+
+def get_browser_profile_path(browser: str) -> Optional[str]:
     """
-    Returns the default path for Chrome profiles based on the operating system.
+    Get the default path for browser profiles based on the operating system and browser type.
+
+    Args:
+        browser (str): The name of the browser (e.g., "Chrome", "Edge", "Firefox").
 
     Raises:
-            NotImplementedError: If the operating system is not supported.
+        NotImplementedError: If the browser is unknown or not supported on the current OS.
 
     Returns:
-            str: The default path for Chrome profiles.
+        str: The path to the browser profile directory, or None if the browser is not supported.
     """
 
-    if platform.system() == "Windows":
-        return path.expandvars(r"%LOCALAPPDATA%/Google/Chrome/")
-    elif platform.system() == "Linux":
-        return path.expanduser("~/.config/google-chrome/")
-    else:
-        raise NotImplementedError("Error: Unknown OS type")
-
-
-def get_edge_profile_path() -> Optional[str]:
-    """
-    Returns the default path for Edge profiles based on the operating system.
-
-    Raises:
-        NotImplementedError: If the operating system is not supported.
-
-    Returns:
-        str: The default path for Edge profiles.
-    """
-
-    if platform.system() == "Windows":
-        return path.expandvars(r"%LOCALAPPDATA%/Microsoft/Edge/")
-    elif platform.system() == "Linux":
-        return path.expanduser(r"~/.config/microsoft-edge/")
-    else:
-        raise NotImplementedError("Error: Unknown OS type")
-
-
-def get_firefox_profiles_path() -> Optional[str]:
-    """
-    Returns the default path for Firefox profiles based on the operating system.
-
-    Raises:
-        NotImplementedError: If the operating system is not supported.
-
-    Returns:
-        str: The default path for Firefox profiles.
-    """
-
-    if platform.system() == "Windows":
-        return path.expandvars(r"%APPDATA%/Mozilla/")
-    elif platform.system() == "Linux":
-        return path.expanduser(r"~/snap/firefox/common/.mozilla/")
-    else:
-        raise NotImplementedError("Error: Unknown OS type")
+    match platform.system():
+        case "Windows":
+            if browser == "Chrome":
+                return path.expandvars(CHROME_PATH[0])
+            elif browser == "Edge":
+                return path.expandvars(EDGE_PATH[0])
+            elif browser == "Firefox":
+                return path.expandvars(FIREFOX_PATH[0])
+            else:
+                raise NotImplementedError(
+                    f"Error: Unknown browser {browser} for Windows"
+                )
+        case "Linux":
+            if browser == "Chrome":
+                return path.expanduser(CHROME_PATH[1])
+            elif browser == "Edge":
+                return path.expanduser(EDGE_PATH[1])
+            elif browser == "Firefox":
+                return path.expanduser(FIREFOX_PATH[1])
+            else:
+                raise NotImplementedError(f"Error: Unknown browser {browser} for Linux")
+        case _:
+            raise NotImplementedError("Error: Unknown OS type")
