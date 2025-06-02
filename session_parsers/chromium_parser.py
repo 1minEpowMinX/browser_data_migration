@@ -1,7 +1,6 @@
 import io
-import sys
 import struct
-
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -199,7 +198,7 @@ def parse_snss_file(path: Path | str) -> ChromiumWindow:
                     if tab_id not in tabs:
                         tabs[tab_id] = ChromiumTab(entries=[], tab_id=tab_id)
                     parse_navigation_entry(buf, tabs[tab_id])
-                    
+
                 case 7:  # kCommandSetSelectedNavigationIndex
                     tab_id = read_uint32(buf)
                     selected_index = read_uint32(buf)

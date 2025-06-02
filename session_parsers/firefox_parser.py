@@ -1,6 +1,6 @@
-from pathlib import Path
-from typing import Optional, List
 import json
+from pathlib import Path
+from typing import List, Optional
 
 import lz4.block
 
@@ -137,7 +137,7 @@ if __name__ == "__main__":
         print("No recovery.lz4 files found")
         exit(1)
 
-    windows = read_firefox_session(session_path)
+    windows = parse_jsonlz4_file(session_path)
     for window in windows:
         for tab in window.tabs:
             print(tab)
