@@ -45,7 +45,8 @@ def browser_data_import(session_file="browser_sessions.json"):
     data = load_from_json(session_file)
 
     for browser_name, browser_data in data["browsers"].items():
-        tabs = browser_data.get("tabs", [])
-        urls = [tab.get("url") for tab in tabs if tab.get("url")]
-        if urls:
-            launch_browser_tabs(browser_name, urls, browser_data)
+        if browser_data.get("running"):
+            tabs = browser_data.get("tabs", [])
+            urls = [tab.get("url") for tab in tabs if tab.get("url")]
+            if urls:
+                launch_browser_tabs(browser_name, urls, browser_data)
