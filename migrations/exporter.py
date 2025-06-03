@@ -135,6 +135,6 @@ def browser_data_export():
                 f"[!] {browser} запущен, завершаем процесс для безопасного экспорта..."
             )
             kill_browser_process(browser)
-            get_browser_data(json, browser)
+        get_browser_data(json, browser)
 
     save_to_json(json, "browser_sessions.json")
