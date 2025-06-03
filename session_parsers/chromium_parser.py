@@ -121,6 +121,8 @@ def parse_navigation_entry(buf: io.BytesIO, tab: ChromiumTab) -> None:
         _ = read_uint32(
             buf
         )  # skip the tab index because the value is duplicated in the payload
+        # if tab.index is None: May be use this in future to set index or update index
+        #     tab.index = index
 
         url = read_string(buf)
         title = read_string16(buf)
