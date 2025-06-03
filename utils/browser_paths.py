@@ -1,10 +1,14 @@
 from os import path
 import platform
+from pathlib import Path
 from typing import Optional
 
-CHROME_PATH = (r"%LOCALAPPDATA%/Google/Chrome/", "~/.config/google-chrome/")
-EDGE_PATH = (r"%LOCALAPPDATA%/Microsoft/Edge/", "~/.config/microsoft-edge/")
-FIREFOX_PATH = (r"%APPDATA%/Mozilla/", "~/snap/firefox/common/.mozilla/")
+CHROME_PATH = (r"%LOCALAPPDATA%/Google/Chrome/", r"~/.config/google-chrome/")
+EDGE_PATH = (r"%LOCALAPPDATA%/Microsoft/Edge/", r"~/.config/microsoft-edge/")
+FIREFOX_PATH = (
+    r"%APPDATA%/Mozilla/Firefox/",
+    r"~/snap/firefox/common/.mozilla/firefox/",
+)
 
 
 def get_browser_profile_path(browser: str) -> Optional[str]:
@@ -44,3 +48,18 @@ def get_browser_profile_path(browser: str) -> Optional[str]:
                 raise NotImplementedError(f"Error: Unknown browser {browser} for Linux")
         case _:
             raise NotImplementedError("Error: Unknown OS type")
+
+
+def safe_ignore_errors(src: Path | str, names: list[str]) -> list[str]:
+    ignore_list = []
+    src_path = Path(src)
+    for name in names:
+        full_path = src_path / name
+        if full_path.is_file():
+            try:
+                # try to open the file to check if it is accessible
+                with open(full_path, "rb"):
+                    pass
+            except Exception:
+                ignore_list.append(name)
+    return ignore_list
