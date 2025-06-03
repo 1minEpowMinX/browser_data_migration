@@ -76,7 +76,7 @@ def export_profile_files(browser: str, profile_path: str, output_root: str) -> s
         )
         return destination
     except Exception as e:
-        raise ValueError(f"Error: {str(e)}")
+        raise ValueError(f"Error exporting profile files: {e}")
 
 
 def get_browser_data(json: dict, browser: str) -> None:
