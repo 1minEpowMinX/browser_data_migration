@@ -15,7 +15,7 @@ def create_default_json() -> dict:
             "Firefox": {
                 "running": False,
                 "tabs": [],
-                "path": r"",
+                "profile_path": r"",
                 "executable": {
                     "Windows": [
                         r"C:\Program Files\Mozilla Firefox\firefox.exe",
@@ -23,11 +23,12 @@ def create_default_json() -> dict:
                     ],
                     "Linux": [r"/usr/bin/firefox"],
                 },
+                "export_path": "",
             },
             "Chrome": {
                 "running": False,
                 "tabs": [],
-                "path": r"",
+                "profile_path": r"",
                 "executable": {
                     "Windows": [
                         r"C:\Program Files\Google\Chrome\Application\chrome.exe",
@@ -35,11 +36,12 @@ def create_default_json() -> dict:
                     ],
                     "Linux": [r"/usr/bin/google-chrome", r"/usr/bin/chromium-browser"],
                 },
+                "export_path": "",
             },
             "Edge": {
                 "running": False,
                 "tabs": [],
-                "path": r"",
+                "profile_path": r"",
                 "executable": {
                     "Windows": [
                         r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
@@ -47,6 +49,7 @@ def create_default_json() -> dict:
                     ],
                     "Linux": [r"/usr/bin/microsoft-edge", r"/usr/bin/msedge"],
                 },
+                "export_path": "",
             },
         },
     }
