@@ -1,3 +1,5 @@
+import os
+import shutil
 from typing import Optional, Union
 
 from session_parsers.chromium_parser import find_latest_snss_file, parse_snss_file
@@ -32,6 +34,51 @@ def tab_to_dict(tab: Union[ChromiumTab, FirefoxTab]) -> Optional[dict]:
     return None
 
 
+def safe_ignore_errors(src, names):
+    ignore_list = []
+    for name in names:
+        full_path = os.path.join(src, name)
+        try:
+            # try to open the file to check if it is accessible
+            with open(full_path, "rb"):
+                pass
+        except Exception:
+            ignore_list.append(name)
+    return ignore_list
+
+
+def export_profile_files(browser: str, profile_path: str, output_root: str) -> str:
+    """
+    Copies the full browser profile directory to a destination folder.
+
+    Args:
+        browser (str): Browser name (used to name the export folder).
+        profile_path (str): Path to the profile directory to copy.
+        output_root (str): Root output directory for all exports.
+
+    Returns:
+        str: The destination path or error message.
+    """
+    if not os.path.exists(profile_path):
+        raise ValueError(f"Error: Profile path does not exist: {profile_path}")
+
+    destination = os.path.join(output_root, browser)
+    try:
+        # Очистим предыдущую копию, если она была
+        if os.path.exists(destination):
+            shutil.rmtree(destination)
+
+        shutil.copytree(
+            profile_path,
+            destination,
+            ignore=safe_ignore_errors,
+            dirs_exist_ok=False,
+        )
+        return destination
+    except Exception as e:
+        raise ValueError(f"Error: {str(e)}")
+
+
 def get_browser_data(json: dict, browser: str) -> None:
     """
     Retrieves browser session data for the specified browser and updates the JSON structure.
@@ -45,7 +92,7 @@ def get_browser_data(json: dict, browser: str) -> None:
     """
 
     browser_path = get_browser_profile_path(browser)
-    json["browsers"][browser]["path"] = browser_path
+    json["browsers"][browser]["profile_path"] = browser_path
     if not browser_path:
         return
 
@@ -64,6 +111,10 @@ def get_browser_data(json: dict, browser: str) -> None:
             browser_windows = parse_snss_file(snss_file)
             tabs = [tab_to_dict(tab) for tab in browser_windows.tabs]
             json["browsers"][browser]["tabs"] = [t for t in tabs if t]
+
+    export_dir = "exported_profiles"
+    export_result = export_profile_files(browser, browser_path, export_dir)
+    json["browsers"][browser]["export_path"] = export_result
 
 
 def browser_data_export():
