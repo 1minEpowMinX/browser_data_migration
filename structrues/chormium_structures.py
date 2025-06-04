@@ -3,10 +3,6 @@ from typing import Optional
 
 from structrues import base_structures
 
-"""
-This module contains the extended base structures used by the Chromium session parser.
-"""
-
 
 @dataclass
 class ChromiumNavigationEntry(base_structures.BaseNavigationEntry):
