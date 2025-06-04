@@ -11,10 +11,18 @@ from utils.check_browser_status import (
 )
 
 
-def restore_profile_files(export_path: Path | str, profile_path: Path | str):
+def restore_profile_files(export_path: Path | str, profile_path: Path | str) -> None:
     """
-    Восстанавливает профиль браузера из экспортированной директории.
+    Restores a browser profile from an exported path to a specified profile path.
+
+    This function checks if the export path exists, and if so, it copies the contents
+    to the profile path, removing any existing profile directory first.
+
+    Args:
+        export_path (Path | str): The path to the exported profile directory.
+        profile_path (Path | str): The path where the profile should be restored.
     """
+
     export_path = Path(export_path)
     profile_path = Path(profile_path)
 
@@ -33,7 +41,18 @@ def restore_profile_files(export_path: Path | str, profile_path: Path | str):
         print(f"[!] Ошибка при восстановлении профиля: {e}")
 
 
-def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict):
+def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> None:
+    """Launches the specified URLs in new tabs of the given browser.
+
+    This function checks if the browser is available, constructs the command to open
+    the URLs in new tabs, and executes it. If the browser is not found, it prints an error message.
+
+    Args:
+        browser (str): The name of the browser to use.
+        urls (list[str]): A list of URLs to open in new tabs.
+        browser_data (dict): A dictionary containing browser-specific data.
+    """
+
     commands = []
 
     if browser_data and "executable" in browser_data:
@@ -69,7 +88,16 @@ def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict):
         print(f"[!] Не удалось открыть вкладки в {browser}: {e}")
 
 
-def browser_data_import(session_file="browser_sessions.json"):
+def browser_data_import(session_file: str = "browser_data.json") -> None:
+    """
+    Imports browser session data from a JSON file and restores the profiles.
+    This function reads the session data from the specified JSON file, checks if the
+    browsers are running, and if so, kills their processes. It then restores the profiles.
+
+    Args:
+        session_file (str): The path to the JSON file containing browser session data. Default is "browser_data.json".
+    """
+
     data = load_from_json(session_file)
 
     for browser_name, browser_data in data["browsers"].items():
