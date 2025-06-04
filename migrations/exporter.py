@@ -60,7 +60,8 @@ def export_profile_files(browser: str, profile_path: str, output_root: str) -> s
         str: The destination path or error message.
     """
     if not os.path.exists(profile_path):
-        raise ValueError(f"Error: Profile path does not exist: {profile_path}")
+        print(f"[!] Профиль {browser} не найден по пути: {profile_path}")
+        return ""
 
     destination = os.path.join(output_root, browser)
     try:
@@ -72,6 +73,7 @@ def export_profile_files(browser: str, profile_path: str, output_root: str) -> s
             profile_path,
             destination,
             ignore=safe_ignore_errors,
+            ignore_dangling_symlinks=True,
             dirs_exist_ok=False,
         )
         return destination
