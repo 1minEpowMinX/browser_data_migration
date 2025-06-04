@@ -1,13 +1,13 @@
-import os
 import shutil
 from typing import Optional, Union
+from pathlib import Path
 
 from session_parsers.chromium_parser import find_latest_snss_file, parse_snss_file
 from session_parsers.firefox_parser import find_latest_recovery_file, parse_jsonlz4_file
 from structrues.chormium_structures import ChromiumTab
 from structrues.firefox_structures import FirefoxTab
 from utils.check_browser_status import is_browser_running, kill_browser_process
-from utils.browser_paths import get_browser_profile_path
+from utils.browser_paths import get_browser_profile_path, safe_ignore_errors
 from utils.json_handler import create_default_json, save_to_json
 
 
@@ -34,49 +34,33 @@ def tab_to_dict(tab: Union[ChromiumTab, FirefoxTab]) -> Optional[dict]:
     return None
 
 
-def safe_ignore_errors(src, names):
-    ignore_list = []
-    for name in names:
-        full_path = os.path.join(src, name)
-        try:
-            # try to open the file to check if it is accessible
-            with open(full_path, "rb"):
-                pass
-        except Exception:
-            ignore_list.append(name)
-    return ignore_list
-
-
-def export_profile_files(browser: str, profile_path: str, output_root: str) -> str:
+def export_profile_files(browser: str, profile_path: Path, output_root: Path) -> str:
     """
     Copies the full browser profile directory to a destination folder.
 
     Args:
         browser (str): Browser name (used to name the export folder).
-        profile_path (str): Path to the profile directory to copy.
-        output_root (str): Root output directory for all exports.
+        profile_path (Path): Path to the profile directory to copy.
+        output_root (Path): Root output directory for all exports.
 
     Returns:
         str: The destination path or error message.
     """
-    if not os.path.exists(profile_path):
+    if not profile_path.exists():
         print(f"[!] Профиль {browser} не найден по пути: {profile_path}")
         return ""
 
-    destination = os.path.join(output_root, browser)
+    destination = output_root / browser
     try:
-        # Очистим предыдущую копию, если она была
-        if os.path.exists(destination):
-            shutil.rmtree(destination)
 
         shutil.copytree(
             profile_path,
             destination,
             ignore=safe_ignore_errors,
             ignore_dangling_symlinks=True,
-            dirs_exist_ok=False,
+            dirs_exist_ok=True,
         )
-        return destination
+        return destination.as_posix()
     except Exception as e:
         raise ValueError(f"Error exporting profile files: {e}")
 
@@ -115,7 +99,7 @@ def get_browser_data(json: dict, browser: str) -> None:
             json["browsers"][browser]["tabs"] = [t for t in tabs if t]
 
     export_dir = "exported_profiles"
-    export_result = export_profile_files(browser, browser_path, export_dir)
+    export_result = export_profile_files(browser, Path(browser_path), Path(export_dir))
     json["browsers"][browser]["export_path"] = export_result
 
 
@@ -131,7 +115,6 @@ def browser_data_export():
 
     for browser in json["browsers"]:
         running = is_browser_running(browser)
-        json["browsers"][browser]["running"] = running
         if running:
             print(
                 f"[!] {browser} запущен, завершаем процесс для безопасного экспорта..."
