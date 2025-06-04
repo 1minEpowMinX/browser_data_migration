@@ -1,5 +1,5 @@
 import shutil
-from typing import Optional, Union
+from typing import Optional
 from pathlib import Path
 
 from session_parsers.chromium_parser import find_latest_snss_file, parse_snss_file
@@ -11,7 +11,7 @@ from utils.browser_paths import get_browser_profile_path, safe_ignore_errors
 from utils.json_handler import create_default_json, save_to_json
 
 
-def tab_to_dict(tab: Union[ChromiumTab, FirefoxTab]) -> Optional[dict]:
+def tab_to_dict(tab: ChromiumTab | FirefoxTab) -> Optional[dict]:
     """
     Converts a browser tab object to a dictionary representation.
 
