@@ -91,6 +91,7 @@ def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> No
 def browser_data_import(session_file: str = "browser_data.json") -> None:
     """
     Imports browser session data from a JSON file and restores the profiles.
+
     This function reads the session data from the specified JSON file, checks if the
     browsers are running, and if so, kills their processes. It then restores the profiles.
 
