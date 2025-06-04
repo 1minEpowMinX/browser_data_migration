@@ -76,7 +76,7 @@ def get_browser_data(json: dict, browser: str) -> None:
     Retrieves browser session data for the specified browser and updates the JSON structure.
 
     This function checks the browser's profile path, retrieves the latest session files,
-        parses the session data, and updates the provided JSON structure with the browser's.
+    parses the session data, and updates the provided JSON structure with the browser's.
 
     Args:
         json (dict): The JSON structure to update with browser data.
