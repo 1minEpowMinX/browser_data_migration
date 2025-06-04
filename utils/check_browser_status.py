@@ -9,7 +9,11 @@ BROWSERS = {
 
 
 def is_browser_running(browser: str) -> bool:
-    """Check if a specified browser is currently running.
+    """
+    Check if a specified browser is currently running.
+
+    This function checks if any process associated with the specified browser is currently running
+    by iterating through all running processes and matching their names against known browser names.
 
     Args:
         browser (str): The name of the browser to check.
@@ -39,6 +43,9 @@ def is_browser_running(browser: str) -> bool:
 def kill_browser_process(browser: str):
     """
     Kills all processes associated with the specified browser by matching process names.
+
+    This function iterates through all running processes and kills those that match the names
+    associated with the specified browser.
 
     Args:
         browser (str): The name of the browser to kill processes for.
