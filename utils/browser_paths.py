@@ -55,11 +55,13 @@ def safe_ignore_errors(src: Path | str, names: list[str]) -> list[str]:
     src_path = Path(src)
     for name in names:
         full_path = src_path / name
-        if full_path.is_file():
-            try:
-                # try to open the file to check if it is accessible
-                with open(full_path, "rb"):
-                    pass
-            except Exception:
-                ignore_list.append(name)
+        if full_path.is_dir():
+            continue  # Skip directories, they will be handled by shutil.copytree
+        try:
+            # try to open the file to check if it is accessible
+            with open(full_path, "rb"):
+                pass
+        except Exception:
+            ignore_list.append(name)
+
     return ignore_list
