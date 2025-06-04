@@ -225,6 +225,9 @@ def find_latest_snss_file(directory: str) -> Optional[Path]:
     Searches the given directory recursively for Chrome SNSS session files
     and returns the path to the most recently modified one.
 
+    This function looks for files matching the pattern "Session_*" within the specified directory.
+    If multiple files are found, it returns the one with the latest modification time.
+
     Args:
         directory (str): Root directory to search.
 
