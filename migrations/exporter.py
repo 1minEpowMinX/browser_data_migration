@@ -16,7 +16,7 @@ def tab_to_dict(tab: Union[ChromiumTab, FirefoxTab]) -> Optional[dict]:
     Converts a browser tab object to a dictionary representation.
 
     This function extracts the URL and title from the tab object if available,
-    and returns a dictionary with these details. If the tab does not have entries.
+    and returns a dictionary with these details. If the tab does not have entries, None is returned.
 
     Args:
         tab (Union[ChromiumTab, FirefoxTab]): The tab object to convert.
@@ -38,10 +38,16 @@ def export_profile_files(browser: str, profile_path: Path, output_root: Path) ->
     """
     Copies the full browser profile directory to a destination folder.
 
+    This function checks if the profile path exists, and if it does,
+    it copies the profile directory to a specified output root directory.
+
     Args:
         browser (str): Browser name (used to name the export folder).
         profile_path (Path): Path to the profile directory to copy.
         output_root (Path): Root output directory for all exports.
+
+    Raises:
+        ValueError: If the profile path does not exist or if an error occurs during copying.
 
     Returns:
         str: The destination path or error message.
@@ -69,8 +75,8 @@ def get_browser_data(json: dict, browser: str) -> None:
     """
     Retrieves browser session data for the specified browser and updates the JSON structure.
 
-    This function checks the browser's profile path, retrieves the latest session file,
-    and extracts tab information to populate the JSON structure.
+    This function checks the browser's profile path, retrieves the latest session files,
+        parses the session data, and updates the provided JSON structure with the browser's.
 
     Args:
         json (dict): The JSON structure to update with browser data.
@@ -108,7 +114,7 @@ def browser_data_export():
     Exports browser session data for all supported browsers into a JSON file.
 
     This function checks if each browser is running, kills the process if it is,
-    retrieves the session data, and saves it to a JSON file named 'browser_sessions.json'.
+    retrieves the session data, and saves it to a JSON file named 'browser_data.json'.
     """
 
     json = create_default_json()
@@ -122,4 +128,4 @@ def browser_data_export():
             kill_browser_process(browser)
         get_browser_data(json, browser)
 
-    save_to_json(json, "browser_sessions.json")
+    save_to_json(json, "browser_data.json")
