@@ -2,17 +2,13 @@ import json
 from pathlib import Path
 from typing import List, Optional
 
-import lz4.block
+import lz4.block  # type: ignore
 
 from structrues.firefox_structures import (
     FirefoxNavigationEntry,
     FirefoxTab,
     FirefoxWindow,
 )
-
-"""
-This module contains the extended base structures used by the Firefox session parser.
-"""
 
 
 ## Firefox Session Format
