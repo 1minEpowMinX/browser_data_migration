@@ -126,21 +126,3 @@ def find_latest_recovery_file(directory: str) -> Optional[Path]:
         return None
 
     return max(candidates, key=lambda f: f.stat().st_mtime)
-
-
-if __name__ == "__main__":
-    session_path = find_latest_recovery_file(
-        "/home/host/snap/firefox/common/.mozilla/firefox/7oq7in7a.default/sessionstore-backups"
-    )
-
-    if session_path is None:
-        print("No recovery.lz4 files found")
-        exit(1)
-
-    windows = parse_jsonlz4_file(session_path)
-    for window in windows:
-        for tab in window.tabs:
-            print(tab)
-            # current = tab.current_entry()
-            # if current:
-            #     print(f"{current.title} — {current.url}")
