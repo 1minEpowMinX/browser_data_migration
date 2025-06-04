@@ -15,6 +15,9 @@ def get_browser_profile_path(browser: str) -> Optional[str]:
     """
     Get the default path for browser profiles based on the operating system and browser type.
 
+    This function returns the path to the browser profile directory for Chrome, Edge, or Firefox.
+    It uses environment variables for Windows paths and expands user directories for Linux paths.
+
     Args:
         browser (str): The name of the browser (e.g., "Chrome", "Edge", "Firefox").
 
@@ -51,6 +54,19 @@ def get_browser_profile_path(browser: str) -> Optional[str]:
 
 
 def safe_ignore_errors(src: Path | str, names: list[str]) -> list[str]:
+    """
+    Safely ignore files that cannot be accessed in the source directory.
+
+    This function checks each file in the source directory and adds it to the ignore list
+    if it cannot be opened. This is useful for avoiding errors when copying files.
+
+    Args:
+        src (Path | str): The source directory path.
+        names (list[str]): List of file names in the source directory.
+
+    Returns:
+        list[str]: A list of file names that could not be accessed.
+    """
     ignore_list = []
     src_path = Path(src)
     for name in names:
