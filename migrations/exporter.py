@@ -52,6 +52,7 @@ def export_profile_files(browser: str, profile_path: Path, output_root: Path) ->
     Returns:
         str: The destination path or error message.
     """
+
     if not profile_path.exists():
         print(f"[!] Профиль {browser} не найден по пути: {profile_path}")
         return ""
