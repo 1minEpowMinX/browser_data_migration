@@ -67,6 +67,7 @@ def safe_ignore_errors(src: Path | str, names: list[str]) -> list[str]:
     Returns:
         list[str]: A list of file names that could not be accessed.
     """
+
     ignore_list = []
     src_path = Path(src)
     for name in names:
