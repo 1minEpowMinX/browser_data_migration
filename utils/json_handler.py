@@ -4,11 +4,16 @@ from pathlib import Path
 
 
 def create_default_json() -> dict:
-    """Creates a default JSON structure for browser session data.
+    """
+    Creates a default JSON structure for browser session data.
+
+    This function initializes a JSON structure with default values for browsers,
+    including their running status, tabs, profile paths, executable paths, and export paths.
 
     Returns:
         dict: The default JSON structure.
     """
+
     return {
         "timestamp": datetime.now().isoformat(),
         "browsers": {
@@ -56,7 +61,11 @@ def create_default_json() -> dict:
 
 
 def save_to_json(data: dict, filename: Path | str) -> None:
-    """Saves the given data to a JSON file.
+    """
+    Saves the given data to a JSON file.
+
+    This function writes the provided data dictionary to a specified JSON file.
+    It raises a ValueError if the specified file is not a JSON file.
 
     Args:
         data (dict): The data to save.
@@ -74,7 +83,12 @@ def save_to_json(data: dict, filename: Path | str) -> None:
 
 
 def load_from_json(filename: Path | str) -> dict:
-    """Loads data from a JSON file.
+    """
+    Loads data from a JSON file.
+
+    This function reads a JSON file and returns the data as a dictionary.
+    It raises a FileNotFoundError if the specified file does not exist,
+    and a ValueError if the specified file is not a JSON file.
 
     Args:
         filename (Path | str): The path to the JSON file.
