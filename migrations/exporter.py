@@ -109,12 +109,15 @@ def get_browser_data(json: dict, browser: str) -> None:
     json["browsers"][browser]["export_path"] = export_result
 
 
-def browser_data_export():
+def browser_data_export(session_file: str = "browser_data.json") -> None:
     """
     Exports browser session data for all supported browsers into a JSON file.
 
     This function checks if each browser is running, kills the process if it is,
     retrieves the session data, and saves it to a JSON file named 'browser_data.json'.
+
+    Args:
+        session_file (str): The name of the JSON file to save the exported data. Default is "browser_data.json".
     """
 
     json = create_default_json()
@@ -128,4 +131,4 @@ def browser_data_export():
             kill_browser_process(browser)
         get_browser_data(json, browser)
 
-    save_to_json(json, "browser_data.json")
+    save_to_json(json, session_file)
