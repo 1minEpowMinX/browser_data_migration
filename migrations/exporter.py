@@ -10,6 +10,11 @@ from utils.browser_paths import get_browser_profile_path, safe_ignore_errors
 from utils.check_browser_status import is_browser_running, kill_browser_process
 from utils.json_handler import create_default_json, save_to_json
 from utils.logger import logger
+from ui.console import (
+    print_success,
+    print_warning,
+    print_error,
+)
 
 
 def tab_to_dict(tab: ChromiumTab | FirefoxTab) -> Optional[dict]:
@@ -48,14 +53,15 @@ def export_profile_files(browser: str, profile_path: Path, output_root: Path) ->
         output_root (Path): Root output directory for all exports.
 
     Raises:
-        ValueError: If the profile path does not exist or if an error occurs during copying.
+        RuntimeError: If the profile path does not exist or if an error occurs during copying.
 
     Returns:
         str: The destination path or error message.
     """
 
     if not profile_path.exists():
-        print(f"[!] Профиль {browser} не найден по пути: {profile_path}")
+        logger.warning(f"Profile path for {browser} does not exist: {profile_path}")
+        print_warning(f"Профиль {browser} не найден по пути: {profile_path}")
         return ""
 
     destination = output_root / browser
@@ -70,7 +76,8 @@ def export_profile_files(browser: str, profile_path: Path, output_root: Path) ->
         )
         return destination.as_posix()
     except Exception as e:
-        raise ValueError(f"Error exporting profile files: {e}")
+        logger.error(f"Error exporting profile files for {browser}: {e}")
+        raise RuntimeError(f"Ошибка при экспорте профиля {browser}: {e}")
 
 
 def get_browser_data(json: dict, browser: str) -> None:
@@ -88,23 +95,34 @@ def get_browser_data(json: dict, browser: str) -> None:
     browser_path = get_browser_profile_path(browser)
     json["browsers"][browser]["profile_path"] = browser_path
     if not browser_path:
+        logger.warning(f"Profile path for {browser} not found.")
+        print_warning(f"Путь профиля для {browser} не найден.")
         return
 
-    if browser == "Firefox":
-        recovery_file = find_latest_recovery_file(browser_path)
-        if recovery_file:
-            firefox_windows = parse_jsonlz4_file(recovery_file)
-            tabs = [
-                tab_to_dict(tab) for window in firefox_windows for tab in window.tabs
-            ]
-            # Filter out None values from tabs
-            json["browsers"]["Firefox"]["tabs"] = [t for t in tabs if t]
-    else:
-        snss_file = find_latest_snss_file(browser_path)
-        if snss_file:
-            browser_windows = parse_snss_file(snss_file)
-            tabs = [tab_to_dict(tab) for tab in browser_windows.tabs]
-            json["browsers"][browser]["tabs"] = [t for t in tabs if t]
+    try:
+        if browser == "Firefox":
+            recovery_file = find_latest_recovery_file(browser_path)
+            if recovery_file:
+                firefox_windows = parse_jsonlz4_file(recovery_file)
+                tabs = [
+                    tab_to_dict(tab)
+                    for window in firefox_windows
+                    for tab in window.tabs
+                ]
+                # Filter out None values from tabs
+                json["browsers"][browser]["tabs"] = [t for t in tabs if t]
+                logger.info(f"Retrieved {len(tabs)} tabs for {browser}.")
+        else:
+            snss_file = find_latest_snss_file(browser_path)
+            if snss_file:
+                browser_windows = parse_snss_file(snss_file)
+                tabs = [tab_to_dict(tab) for tab in browser_windows.tabs]
+                json["browsers"][browser]["tabs"] = [t for t in tabs if t]
+                logger.info(f"Retrieved {len(tabs)} tabs for {browser}.")
+    except Exception as e:
+        logger.error(f"Error retrieving data for {browser}: {e}")
+        print_error(f"Ошибка при получении данных для {browser}: {e}")
+        return
 
     export_dir = "exported_profiles"
     export_result = export_profile_files(browser, Path(browser_path), Path(export_dir))
@@ -122,15 +140,18 @@ def browser_data_export(session_file: str = "browser_data.json") -> None:
         session_file (str): The name of the JSON file to save the exported data. Default is "browser_data.json".
     """
 
+    logger.info("Starting browser data export...")
+
     json = create_default_json()
 
     for browser in json["browsers"]:
         running = is_browser_running(browser)
         if running:
-            print(
-                f"[!] {browser} запущен, завершаем процесс для безопасного экспорта..."
-            )
+            logger.info(f"{browser} is running, killing the process.")
+            print_warning(f"{browser} запущен, процесс будет завершен.")
             kill_browser_process(browser)
         get_browser_data(json, browser)
 
     save_to_json(json, session_file)
+    logger.info(f"Browser data exported to {session_file}")
+    print_success(f"Данные браузеров успешно экспортированы в {session_file}")
