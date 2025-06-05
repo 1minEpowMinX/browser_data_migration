@@ -92,14 +92,14 @@ def get_browser_data(json: dict, browser: str) -> None:
         browser (str): The name of the browser to retrieve data for.
     """
 
-    browser_path = get_browser_profile_path(browser)
-    json["browsers"][browser]["profile_path"] = browser_path
-    if not browser_path:
-        logger.warning(f"Profile path for {browser} not found.")
-        print_warning(f"Путь профиля для {browser} не найден.")
-        return
-
     try:
+        browser_path = get_browser_profile_path(browser)
+        json["browsers"][browser]["profile_path"] = browser_path
+        if not browser_path:
+            logger.warning(f"Profile path for {browser} not found.")
+            print_warning(f"Путь профиля для {browser} не найден.")
+
+            return
         if browser == "Firefox":
             recovery_file = find_latest_recovery_file(browser_path)
             if recovery_file:
@@ -144,14 +144,18 @@ def browser_data_export(session_file: str = "browser_data.json") -> None:
 
     json = create_default_json()
 
-    for browser in json["browsers"]:
-        running = is_browser_running(browser)
-        if running:
-            logger.info(f"{browser} is running, killing the process.")
-            print_warning(f"{browser} запущен, процесс будет завершен.")
-            kill_browser_process(browser)
-        get_browser_data(json, browser)
+    try:
+        for browser in json["browsers"]:
+            running = is_browser_running(browser)
+            if running:
+                logger.info(f"{browser} is running, killing the process.")
+                print_warning(f"{browser} запущен, процесс будет завершен.")
+                kill_browser_process(browser)
+            get_browser_data(json, browser)
 
-    save_to_json(json, session_file)
-    logger.info(f"Browser data exported to {session_file}")
-    print_success(f"Данные браузеров успешно экспортированы в {session_file}")
+        save_to_json(json, session_file)
+        logger.info(f"Browser data exported to {session_file}")
+        print_success(f"Данные браузеров успешно экспортированы в {session_file}")
+    except Exception as e:
+        logger.error(f"Error exporting data: {e}")
+        print_error(f"Ошибка при экспорте данных: {e}")
