@@ -1,14 +1,15 @@
-import shutil
-from typing import Optional
 from pathlib import Path
+from shutil import copytree
+from typing import Optional
 
 from session_parsers.chromium_parser import find_latest_snss_file, parse_snss_file
 from session_parsers.firefox_parser import find_latest_recovery_file, parse_jsonlz4_file
 from structrues.chormium_structures import ChromiumTab
 from structrues.firefox_structures import FirefoxTab
-from utils.check_browser_status import is_browser_running, kill_browser_process
 from utils.browser_paths import get_browser_profile_path, safe_ignore_errors
+from utils.check_browser_status import is_browser_running, kill_browser_process
 from utils.json_handler import create_default_json, save_to_json
+from utils.logger import logger
 
 
 def tab_to_dict(tab: ChromiumTab | FirefoxTab) -> Optional[dict]:
@@ -60,7 +61,7 @@ def export_profile_files(browser: str, profile_path: Path, output_root: Path) ->
     destination = output_root / browser
     try:
 
-        shutil.copytree(
+        copytree(
             profile_path,
             destination,
             ignore=safe_ignore_errors,
