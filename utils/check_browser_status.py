@@ -1,5 +1,9 @@
 import psutil
 
+from ui.console import print_warning
+
+from utils.logger import logger
+
 # Mapping of browser names to process names (may be different on different platforms)
 BROWSERS = {
     "Firefox": ["firefox.exe", "firefox"],
@@ -27,6 +31,7 @@ def is_browser_running(browser: str) -> bool:
 
     names = BROWSERS.get(browser, [])
     if not names:
+        logger.error(f"Error: unknown browser {browser}")
         raise ValueError(f"Error: unknown browser {browser}")
 
     all_names = [name.lower() for name in names]
@@ -63,7 +68,8 @@ def kill_browser_process(browser: str):
         try:
             proc_name = proc.name()
             if proc_name and proc_name.lower() in all_names:
-                print(f"[!] Killing process: {proc_name} (PID: {proc.pid})")
+                logger.info(f"Killing process: {proc_name} (PID: {proc.pid})")
+                print_warning(f"Завершение процесса: {proc_name} (PID: {proc.pid})")
                 proc.kill()
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
