@@ -10,6 +10,7 @@ from ui.status import status_bar
 def main_menu():
     while True:
         console.clear()
+        console.print()
         console.print(
             Panel.fit(
                 "[bold cyan]Меню переноса данных браузеров[/bold cyan]\n"
