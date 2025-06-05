@@ -1,6 +1,6 @@
 import psutil
 
-from ui.console import print_warning
+from ui.console import print_success
 
 from utils.logger import logger
 
@@ -69,7 +69,7 @@ def kill_browser_process(browser: str):
             proc_name = proc.name()
             if proc_name and proc_name.lower() in all_names:
                 logger.info(f"Killing process: {proc_name} (PID: {proc.pid})")
-                print_warning(f"Завершение процесса: {proc_name} (PID: {proc.pid})")
+                print_success(f"Завершение процесса: {proc_name} (PID: {proc.pid})")
                 proc.kill()
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
