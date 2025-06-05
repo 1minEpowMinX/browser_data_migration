@@ -9,6 +9,12 @@ from utils.check_browser_status import (
     is_browser_running,
     kill_browser_process,
 )
+from utils.logger import logger
+from ui.console import (
+    print_success,
+    print_warning,
+    print_error,
+)
 
 
 def restore_profile_files(export_path: Path | str, profile_path: Path | str) -> None:
@@ -27,7 +33,8 @@ def restore_profile_files(export_path: Path | str, profile_path: Path | str) -> 
     profile_path = Path(profile_path)
 
     if not export_path.exists():
-        print(f"[!] Экспортированный профиль не найден: {export_path}")
+        logger.warning(f"Exported profile not found: {export_path}")
+        print_warning(f"Экспортированный профиль не найден: {export_path}")
         return
 
     try:
@@ -36,13 +43,16 @@ def restore_profile_files(export_path: Path | str, profile_path: Path | str) -> 
         shutil.copytree(
             export_path, profile_path, ignore_dangling_symlinks=True, dirs_exist_ok=True
         )
-        print(f"[+] Профиль восстановлен в: {profile_path}")
+        logger.info(f"Profile restored from {export_path} to {profile_path}")
+        print_success(f"Профиль восстановлен из {export_path} в {profile_path}")
     except Exception as e:
-        print(f"[!] Ошибка при восстановлении профиля: {e}")
+        logger.error(f"Error restoring profile: {e}")
+        print_error(f"Ошибка при восстановлении профиля: {e}")
 
 
 def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> None:
-    """Launches the specified URLs in new tabs of the given browser.
+    """
+    Launches the specified URLs in new tabs of the given browser.
 
     This function checks if the browser is available, constructs the command to open
     the URLs in new tabs, and executes it. If the browser is not found, it prints an error message.
@@ -72,7 +82,8 @@ def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> No
             cmd_name = found
             break
     else:
-        print(f"[!] {browser} не найден ни по абсолютному пути, ни в PATH.")
+        logger.warning(f"{browser} not found in PATH or absolute path.")
+        print_warning(f"{browser} не найден ни по абсолютному пути, ни в PATH.")
         return
 
     # For Firefox, use --new-tab to open multiple URLs in new tabs
@@ -81,11 +92,15 @@ def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> No
     else:
         args = [cmd_name] + urls
 
+    logger.info(f"Launching {len(urls)} tabs in {browser}")
+
     try:
         subprocess.Popen(args)
-        print(f"[+] Запущено {len(urls)} вкладок в {browser}")
+        logger.info(f"Opened {len(urls)} tabs in {browser}")
+        print_success(f"Открыто {len(urls)} вкладок в {browser}")
     except Exception as e:
-        print(f"[!] Не удалось открыть вкладки в {browser}: {e}")
+        logger.error(f"Failed to open tabs in {browser}: {e}")
+        print_error(f"Не удалось открыть вкладки в {browser}: {e}")
 
 
 def browser_data_import(session_file: str = "browser_data.json") -> None:
@@ -99,20 +114,36 @@ def browser_data_import(session_file: str = "browser_data.json") -> None:
         session_file (str): The path to the JSON file containing browser session data. Default is "browser_data.json".
     """
 
-    data = load_from_json(session_file)
+    logger.info("Starting browser data import...")
 
-    for browser_name, browser_data in data["browsers"].items():
-        if is_browser_running(browser_name):
-            print(f"[!] {browser_name} уже запущен. Завершение процесса...")
-            kill_browser_process(browser_name)
+    try:
+        data = load_from_json(session_file)
 
-        export_path = browser_data.get("export_path")
-        profile_path = browser_data.get("profile_path")
+        for browser_name, browser_data in data["browsers"].items():
+            if is_browser_running(browser_name):
+                logger.info(f"{browser_name} is running, killing the process.")
+                print_warning(f"{browser_name} запущен, процесс будет завершен.")
+                kill_browser_process(browser_name)
 
-        if export_path and profile_path:
+            export_path = browser_data.get("export_path")
+            profile_path = browser_data.get("profile_path")
+
+            if not export_path and not profile_path:
+                logger.warning(f"No export or profile path found for {browser_name}.")
+                print_warning(
+                    f"Не найден путь экспорта или профиля для {browser_name}."
+                )
+                continue
+
             restore_profile_files(export_path, profile_path)
 
-        tabs = browser_data.get("tabs", [])
-        urls = [tab.get("url") for tab in tabs if tab.get("url")]
-        if urls:
-            launch_browser_tabs(browser_name, urls, browser_data)
+            tabs = browser_data.get("tabs", [])
+            urls = [tab.get("url") for tab in tabs if tab.get("url")]
+            if urls:
+                launch_browser_tabs(browser_name, urls, browser_data)
+
+        logger.info("Browser data import completed.")
+        print_success("Импорт данных браузера завершен.")
+    except Exception as e:
+        logger.error(f"Error importing browser data: {e}")
+        print_error(f"Ошибка при импорте данных браузера: {e}")
