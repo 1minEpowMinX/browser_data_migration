@@ -32,8 +32,8 @@ class FirefoxTab(base_structures.BaseTab[FirefoxNavigationEntry]):
         is_hidden (Optional[bool]): Whether the tab is hidden in the tab strip.
     """
 
-    pinned: Optional[bool] = False
-    is_hidden: Optional[bool] = False
+    pinned: bool = False
+    is_hidden: bool = False
 
 
 @dataclass
