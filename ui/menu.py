@@ -7,6 +7,27 @@ from ui.console import console
 from ui.status import status_bar
 
 
+help_text = """
+[bold cyan]Помощь[/bold cyan]
+
+Приложение предназначено для переноса данных браузеров Chrome, Edge и Firefox между компьютерами.
+
+[bold green]1. Экспорт данных[/bold green] — сохраняет:
+  • текущие открытые вкладки;
+  • профили браузеров (настройки, расширения, кэш и прочее).
+
+[bold green]2. Импорт данных[/bold green] — восстанавливает вкладки и профили из ранее сохранённых данных.
+
+Результат сохраняется в файл [bold]browser_data.json[/bold] и директорию с папками профилей в текущей папке.
+
+[bold yellow]Важно:[/bold yellow]
+  • производите перенос между одинаковыми профилями, либо редактируйте путь
+    [bold]browser_data.json["browsers"][browser]["export_path"][/bold] после экспорта;
+  • если вы хотите, чтобы вкладки были автоматически восстановлены после переноса —
+    не закрывайте браузер. Программа сделает это автоматически.
+"""
+
+
 def main_menu():
     while True:
         console.clear()
@@ -54,17 +75,11 @@ def main_menu():
                         console.print(f"[bold red]Ошибка при импорте: {e}[/bold red]")
             case 3:
                 console.print(
-                    Panel.fit(
-                        "[bold cyan]Помощь[/bold cyan]\n\n"
-                        "Приложение предназначено для переноса данных браузеров Chrome, Edge и Firefox между компьютерами.\n\n"
-                        "[bold green]1. Экспорт данных[/bold green] — сохраняет:\n"
-                        "   • текущие открытые вкладки;\n"
-                        "   • профили браузеров (настройки, расширения, кэш и прочее).\n\n"
-                        "[bold green]2. Импорт данных[/bold green] — восстанавливает вкладки и профили из ранее сохранённых данных.\n\n"
-                        "Результат сохраняется в файл [bold]browser_data.json[/bold] и директорию с папками профилей в текущей папке.\n\n"
-                        "[bold yellow]Важно:[/bold yellow] Если вы хотите чтобы вкладки снова были открыты после переноса - не закрывайте браузер. Программа сделает это автоматически.\n",
-                        title="[bold cyan]Как пользоваться?[/bold cyan]",
-                        border_style="bright_blue",
+                    Panel(
+                        help_text,
+                        title="[bold bright_blue]Как пользоваться?[/bold bright_blue]",
+                        border_style="cyan",
+                        width=100,
                     )
                 )
             case 0:
