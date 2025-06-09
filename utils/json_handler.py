@@ -1,4 +1,4 @@
-import json
+from json import dump, load
 from datetime import datetime
 from pathlib import Path
 
@@ -79,7 +79,7 @@ def save_to_json(data: dict, filename: Path | str) -> None:
         raise ValueError(f"File '{filename}' is not a JSON file.")
 
     with open(filename, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+        dump(data, f, indent=4, ensure_ascii=False)
 
 
 def load_from_json(filename: Path | str) -> dict:
@@ -108,4 +108,4 @@ def load_from_json(filename: Path | str) -> dict:
         raise ValueError(f"File '{filename}' is not a JSON file.")
 
     with open(filename, "r", encoding="utf-8") as f:
-        return json.load(f)
+        return load(f)

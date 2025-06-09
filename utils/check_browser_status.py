@@ -1,4 +1,4 @@
-import psutil
+from psutil import process_iter, NoSuchProcess, AccessDenied
 
 from ui.console import print_success
 
@@ -35,12 +35,12 @@ def is_browser_running(browser: str) -> bool:
         raise ValueError(f"Error: unknown browser {browser}")
 
     all_names = [name.lower() for name in names]
-    for proc in psutil.process_iter():
+    for proc in process_iter():
         try:
             proc_name = proc.name()
             if proc_name and proc_name.lower() in all_names:
                 return True
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
+        except (NoSuchProcess, AccessDenied):
             continue
     return False
 
@@ -64,12 +64,12 @@ def kill_browser_process(browser: str):
         raise ValueError(f"Error: unknown browser {browser}")
 
     all_names = [name.lower() for name in targets]
-    for proc in psutil.process_iter():
+    for proc in process_iter():
         try:
             proc_name = proc.name()
             if proc_name and proc_name.lower() in all_names:
                 logger.info(f"Killing process: {proc_name} (PID: {proc.pid})")
                 print_success(f"Завершение процесса: {proc_name} (PID: {proc.pid})")
                 proc.kill()
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
+        except (NoSuchProcess, AccessDenied):
             continue

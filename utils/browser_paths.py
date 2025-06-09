@@ -1,5 +1,5 @@
 from os import path
-import platform
+from platform import system
 from pathlib import Path
 from typing import Optional
 
@@ -28,7 +28,7 @@ def get_browser_profile_path(browser: str) -> Optional[str]:
         str: The path to the browser profile directory, or None if the browser is not supported.
     """
 
-    match platform.system():
+    match system():
         case "Windows":
             if browser == "Chrome":
                 return path.expandvars(CHROME_PATH[0])

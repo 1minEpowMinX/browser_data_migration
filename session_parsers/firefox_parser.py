@@ -1,4 +1,4 @@
-import json
+from json import loads
 from pathlib import Path
 from typing import Optional
 
@@ -72,7 +72,7 @@ def parse_jsonlz4_file(path: Path | str) -> list[FirefoxWindow]:
             raise ValueError("Not a valid Firefox session file.")
         compressed = f.read()
         json_bytes = lz4.block.decompress(compressed)
-        data = json.loads(json_bytes)
+        data = loads(json_bytes)
 
     windows: list[FirefoxWindow] = []
 
