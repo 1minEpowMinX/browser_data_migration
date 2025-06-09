@@ -77,8 +77,8 @@ def main_menu():
                 console.print(
                     Panel(
                         help_text,
-                        title="[bold bright_blue]Как пользоваться?[/bold bright_blue]",
-                        border_style="cyan",
+                        title="[bold cyan]Как пользоваться?[/bold cyan]",
+                        border_style="bright_blue",
                         width=100,
                     )
                 )
