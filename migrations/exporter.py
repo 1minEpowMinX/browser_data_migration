@@ -93,15 +93,15 @@ def get_browser_data(json: dict, browser: str) -> None:
     """
 
     try:
-        browser_path = get_browser_profile_path(browser)
-        json["browsers"][browser]["profile_path"] = browser_path
-        if not browser_path:
+        profile_path = get_browser_profile_path(browser)
+        json["browsers"][browser]["profile_path"] = profile_path
+        if not profile_path:
             logger.warning(f"Profile path for {browser} not found.")
             print_warning(f"Путь профиля для {browser} не найден.")
 
             return
         if browser == "Firefox":
-            recovery_file = find_latest_recovery_file(browser_path)
+            recovery_file = find_latest_recovery_file(profile_path)
             if recovery_file:
                 firefox_windows = parse_jsonlz4_file(recovery_file)
                 tabs = [
@@ -113,20 +113,23 @@ def get_browser_data(json: dict, browser: str) -> None:
                 json["browsers"][browser]["tabs"] = [t for t in tabs if t]
                 logger.info(f"Retrieved {len(tabs)} tabs for {browser}.")
         else:
-            snss_file = find_latest_snss_file(browser_path)
+            snss_file = find_latest_snss_file(profile_path)
             if snss_file:
                 browser_windows = parse_snss_file(snss_file)
                 tabs = [tab_to_dict(tab) for tab in browser_windows.tabs]
                 json["browsers"][browser]["tabs"] = [t for t in tabs if t]
                 logger.info(f"Retrieved {len(tabs)} tabs for {browser}.")
+
+        export_dir = "exported_profiles"
+        export_result = export_profile_files(
+            browser, Path(profile_path), Path(export_dir)
+        )
+        json["browsers"][browser]["export_path"] = export_result
+        logger.info(f"Profile exported from {profile_path} to {export_result}.")
     except Exception as e:
         logger.error(f"Error retrieving data for {browser}: {e}")
         print_error(f"Ошибка при получении данных для {browser}: {e}")
         return
-
-    export_dir = "exported_profiles"
-    export_result = export_profile_files(browser, Path(browser_path), Path(export_dir))
-    json["browsers"][browser]["export_path"] = export_result
 
 
 def browser_data_export(session_file: str = "browser_data.json") -> None:
