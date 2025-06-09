@@ -1,7 +1,6 @@
 from psutil import process_iter, NoSuchProcess, AccessDenied
 
 from ui.console import print_success
-
 from utils.logger import logger
 
 # Mapping of browser names to process names (may be different on different platforms)
