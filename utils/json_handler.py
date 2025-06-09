@@ -23,8 +23,8 @@ def create_default_json() -> dict:
                 "profile_path": r"",
                 "executable": {
                     "Windows": [
-                        r"C:\Program Files\Mozilla Firefox\firefox.exe",
-                        r"C:\Program Files (x86)\Mozilla Firefox\firefox.exe",
+                        r"C:/Program Files/Mozilla Firefox/firefox.exe",
+                        r"C:/Program Files (x86)/Mozilla Firefox/firefox.exe",
                     ],
                     "Linux": [r"/usr/bin/firefox"],
                 },
@@ -36,8 +36,8 @@ def create_default_json() -> dict:
                 "profile_path": r"",
                 "executable": {
                     "Windows": [
-                        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-                        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+                        r"C:/Program Files/Google\Chrome/Application/chrome.exe",
+                        r"C:/Program Files (x86)/Google\Chrome/Application/chrome.exe",
                     ],
                     "Linux": [r"/usr/bin/google-chrome", r"/usr/bin/chromium-browser"],
                 },
@@ -49,8 +49,8 @@ def create_default_json() -> dict:
                 "profile_path": r"",
                 "executable": {
                     "Windows": [
-                        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
-                        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+                        r"C:/Program Files/Microsoft/Edge/Application/msedge.exe",
+                        r"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
                     ],
                     "Linux": [r"/usr/bin/microsoft-edge", r"/usr/bin/msedge"],
                 },
