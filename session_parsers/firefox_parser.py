@@ -2,7 +2,7 @@ from json import loads
 from pathlib import Path
 from typing import Optional
 
-import lz4.block  # type: ignore
+from lz4.block import decompress  # type: ignore
 
 from structrues.firefox_structures import (
     FirefoxNavigationEntry,
@@ -71,7 +71,7 @@ def parse_jsonlz4_file(path: Path | str) -> list[FirefoxWindow]:
         if magic != b"mozLz40\0":
             raise ValueError("Not a valid Firefox session file.")
         compressed = f.read()
-        json_bytes = lz4.block.decompress(compressed)
+        json_bytes = decompress(compressed)
         data = loads(json_bytes)
 
     windows: list[FirefoxWindow] = []
