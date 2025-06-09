@@ -1,7 +1,7 @@
 import platform
 from pathlib import Path
-import subprocess
-import shutil
+from psutil import Popen
+from shutil import copytree, rmtree, which
 
 from utils.json_handler import load_from_json
 from utils.check_browser_status import (
@@ -39,8 +39,8 @@ def restore_profile_files(export_path: Path | str, profile_path: Path | str) -> 
 
     try:
         if profile_path.exists():
-            shutil.rmtree(profile_path)
-        shutil.copytree(
+            rmtree(profile_path)
+        copytree(
             export_path, profile_path, ignore_dangling_symlinks=True, dirs_exist_ok=True
         )
         logger.info(f"Profile restored from {export_path} to {profile_path}")
@@ -77,7 +77,7 @@ def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> No
         if cmd_path.is_absolute() and cmd_path.is_file():
             cmd_name = str(cmd_path)
             break
-        found = shutil.which(cmd)
+        found = which(cmd)
         if found:
             cmd_name = found
             break
@@ -95,7 +95,7 @@ def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> No
     logger.info(f"Launching {len(urls)} tabs in {browser}")
 
     try:
-        subprocess.Popen(args)
+        Popen(args)
         logger.info(f"Opened {len(urls)} tabs in {browser}")
         print_success(f"Открыто {len(urls)} вкладок в {browser}")
     except Exception as e:
