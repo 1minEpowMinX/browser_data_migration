@@ -1,4 +1,4 @@
-> 🇷🇺 [Read in Russian](./README.ru.md)
+> 🇷🇺 [Читать на Русском](./README.ru.md)
 
 
 # 📦 Browser Data Migration
