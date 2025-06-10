@@ -1,64 +1,79 @@
+> 🇷🇺 [Читать на Русском](./README.ru.md)
+
+
 # 📦 Browser Data Migration
 
-Утилита для **экспорта и импорта данных браузеров Chrome, Edge и Firefox** между компьютерами.  
-Программа сохраняет текущие открытые вкладки и профили браузеров, включая настройки, расширения, историю и другие данные.
+A utility for **exporting and importing data from Chrome, Edge, and Firefox browsers** between computers.  
+The tool saves currently open tabs and browser profiles, including settings, extensions, history, and more.
 
 ---
 
-## 🚀 Возможности
+## 🚀 Features
 
-- 📤 **Экспорт данных**:
-  - текущие вкладки;
-  - профили браузеров (настройки, расширения, кэш и т.д.).
+- 📤 **Export data**:
+  - currently open tabs;
+  - full browser profiles (settings, extensions, cache, etc.).
 
-- 📥 **Импорт данных**:
-  - восстановление вкладок;
-  - перенос пользовательских профилей.
+- 📥 **Import data**:
+  - restore tabs;
+  - transfer browser profiles.
 
-- 📁 Поддержка популярных браузеров: **Chrome, Edge, Firefox**.
-
----
-
-## 🖥️ Как использовать
-
-### 📦 Экспорт данных
-1. Запустите утилиту и выберите `1. Экспорт данных`.
-2. Программа автоматически найдёт установленные браузеры и сохранит:
-   - файл `browser_data.json`;
-   - директории с профилями браузеров.
-
-### 📥 Импорт данных
-1. Перенесите файл `browser_data.json` и папки профилей на новый компьютер.
-2. Запустите утилиту и выберите `2. Импорт данных`.
+- 📁 Supports popular browsers: **Chrome, Edge, Firefox**.
 
 ---
 
-## ⚠️ Важно
+## 🖥️ How to Use
 
-- Перенос должен происходить **между одинаковыми профилями** (напр., с одного имени пользователя на другой).
-- При необходимости отредактируйте файл `browser_data.json`, параметр  
-  `["browsers"][<название_браузера>]["export_path"]`, чтобы указать корректный путь.
-- **Не закрывайте браузер**, если хотите, чтобы вкладки автоматически **восстановились** — утилита сама завершит процесс.
+### 📦 Export Data
+1. Run the utility and select `1. Export Data`.
+2. The program will detect installed browsers and save:
+   - a `browser_data.json` file;
+   - directories with browser profiles.
+
+### 📥 Import Data
+1. Transfer `browser_data.json` and profile folders to the new computer.
+2. Run the utility and select `2. Import Data`.
 
 ---
 
-## 🛠️ Установка
+## ⚠️ Important Notes
 
-1. Убедитесь, что у вас установлен Python 3.9+.
-2. Клонируйте репозиторий:
+- Make sure to transfer data **between matching user profiles** (e.g., same user name).
+- You can manually edit the `browser_data.json` file if needed — specifically the  
+  `["browsers"][<browser_name>]["export_path"]` value.
+- **Keep the browser open** if you want tabs to auto-**restore** — the utility will close it automatically at the right time.
+
+---
+
+## 🛠️ Installation
+
+### 🖥️ Windows
+
+1. Go to the [Releases](https://github.com/1minEpowMinX/browser_data_migration/releases) tab.
+2. Download the `browser-data-migration.exe` file.
+3. Run the `.exe` — no installation required.
+
+> ❗ On first launch, Windows may warn about an unknown publisher — this is normal for self-built utilities.
+
+<br>
+
+### 🐍 Install from source (Windows & Linux)
+
+1. Make sure **Python 3.9+** is installed.
+2. Clone the repository:
 
    ```bash
    git clone https://github.com/1minEpowMinX/browser-data-migration.git
    cd browser-data-migration
    ```
    
-3. Установите зависимости:
+3. Install dependencies:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Запустите приложение:
+4. Run the app:
 
    ```bash
    python main.py
@@ -66,7 +81,7 @@
 
 ---
 
-## 📁 Структура проекта
+## 📁 Project Structure
 
 ```css
 browser-data-migration/
@@ -100,4 +115,4 @@ browser-data-migration/
 ---
 
 ## 📄 License
-MIT License — свободно используйте, модифицируйте и распространяйте.
+MIT License — feel free to use, modify, and distribute this project.
