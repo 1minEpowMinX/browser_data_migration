@@ -47,7 +47,19 @@ The tool saves currently open tabs and browser profiles, including settings, ext
 
 ## 🛠️ Installation
 
-1. Make sure Python 3.9+ is installed.
+### 🖥️ Windows
+
+1. Go to the [Releases](https://github.com/1minEpowMinX/browser_data_migration/releases) tab.
+2. Download the `browser-data-migration.exe` file.
+3. Run the `.exe` — no installation required.
+
+> ❗ On first launch, Windows may warn about an unknown publisher — this is normal for self-built utilities.
+
+<br>
+
+### 🐍 Install from source (Windows & Linux)
+
+1. Make sure **Python 3.9+** is installed.
 2. Clone the repository:
 
    ```bash
