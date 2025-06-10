@@ -22,7 +22,7 @@ help_text = """
 
 [bold yellow]Важно:[/bold yellow]
   • производите перенос между одинаковыми профилями, либо редактируйте путь
-    [bold]browser_data.json["browsers"][browser]["profile_path"][/bold] после экспорта;
+    [bold]browser_data.json["browsers"][<browser_name>]["export_path"][/bold] после экспорта;
   • если вы хотите, чтобы вкладки были автоматически восстановлены после переноса —
     не закрывайте браузер. Программа сделает это автоматически.
 """
