@@ -1,6 +1,5 @@
-import io
-import struct
-import sys
+from io import BytesIO
+from struct import unpack
 from pathlib import Path
 from typing import Optional
 
@@ -57,22 +56,22 @@ from structrues.chormium_structures import (
 
 
 def read_uint8(f) -> int:
-    return struct.unpack("<B", f.read(1))[0]
+    return unpack("<B", f.read(1))[0]
 
 
 def read_uint16(f) -> int:
-    return struct.unpack("<H", f.read(2))[0]
+    return unpack("<H", f.read(2))[0]
 
 
 def read_uint32(f) -> int:
-    return struct.unpack("<I", f.read(4))[0]
+    return unpack("<I", f.read(4))[0]
 
 
 def read_uint64(f) -> int:
-    return struct.unpack("<Q", f.read(8))[0]
+    return unpack("<Q", f.read(8))[0]
 
 
-def read_bytestring(f: io.BytesIO) -> bytes:
+def read_bytestring(f: BytesIO) -> bytes:
     sz = read_uint32(f)
     pad = (4 - sz % 4) % 4
     bytestring = f.read(sz)
@@ -98,7 +97,7 @@ def read_string16(f) -> str:
     return string
 
 
-def parse_navigation_entry(buf: io.BytesIO, tab: ChromiumTab) -> None:
+def parse_navigation_entry(buf: BytesIO, tab: ChromiumTab) -> None:
     """
     Parses a Chrome SNSS command of type 6 (kCommandUpdateTabNavigation) and appends a navigation
     entry to the provided Tab object.
@@ -121,6 +120,8 @@ def parse_navigation_entry(buf: io.BytesIO, tab: ChromiumTab) -> None:
         _ = read_uint32(
             buf
         )  # skip the tab index because the value is duplicated in the payload
+        # if tab.index is None: May be use this in future to set index or update index
+        #     tab.index = index
 
         url = read_string(buf)
         title = read_string16(buf)
@@ -192,12 +193,12 @@ def parse_snss_file(path: Path | str) -> ChromiumWindow:
             size_bytes = f.read(2)
             if len(size_bytes) < 2:
                 break
-            size = struct.unpack("<H", size_bytes)[0]
+            size = unpack("<H", size_bytes)[0]
             if size == 0:
                 break
             command_type = read_uint8(f)
             payload = f.read(size - 1)
-            buf = io.BytesIO(payload)
+            buf = BytesIO(payload)
 
             match command_type:
                 case 6:  # kCommandUpdateTabNavigation
@@ -223,12 +224,16 @@ def find_latest_snss_file(directory: str) -> Optional[Path]:
     Searches the given directory recursively for Chrome SNSS session files
     and returns the path to the most recently modified one.
 
+    This function looks for files matching the pattern "Session_*" within the specified directory.
+    If multiple files are found, it returns the one with the latest modification time.
+
     Args:
         directory (str): Root directory to search.
 
     Returns:
         Optional[Path]: Path to the newest SNSS file, or None if not found.
     """
+
     session_path = Path(directory)
     if not session_path.exists():
         return None

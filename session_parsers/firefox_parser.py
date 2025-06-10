@@ -1,18 +1,14 @@
-import json
+from json import loads
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
-import lz4.block
+from lz4.block import decompress  # type: ignore
 
 from structrues.firefox_structures import (
     FirefoxNavigationEntry,
     FirefoxTab,
     FirefoxWindow,
 )
-
-"""
-This module contains the extended base structures used by the Firefox session parser.
-"""
 
 
 ## Firefox Session Format
@@ -52,11 +48,13 @@ This module contains the extended base structures used by the Firefox session pa
 # https://searchfox.org/mozilla-central/source/browser/components/sessionstore
 
 
-def parse_jsonlz4_file(path: Path | str) -> List[FirefoxWindow]:
+def parse_jsonlz4_file(path: Path | str) -> list[FirefoxWindow]:
     """
     Parses a Firefox session file (e.g., recovery.jsonlz4) and returns structured FirefoxWindow objects.
 
     The session file must begin with the `mozLz40\0` magic header and contain an LZ4-compressed JSON payload.
+    The JSON structure is expected to contain a list of windows, each with tabs and navigation entries.
+    The entries include URL, title, referrer, and last accessed timestamp.
 
     Args:
         path (Path | str): Path to the .jsonlz4 file to parse.
@@ -65,22 +63,23 @@ def parse_jsonlz4_file(path: Path | str) -> List[FirefoxWindow]:
         ValueError: If the file does not start with the expected magic header.
 
     Returns:
-        List[FirefoxWindow]: A list of FirefoxWindow objects representing the session.
+        list[FirefoxWindow]: A list of FirefoxWindow objects representing the session.
     """
+
     with open(path, "rb") as f:
         magic = f.read(8)
         if magic != b"mozLz40\0":
             raise ValueError("Not a valid Firefox session file.")
         compressed = f.read()
-        json_bytes = lz4.block.decompress(compressed)
-        data = json.loads(json_bytes)
+        json_bytes = decompress(compressed)
+        data = loads(json_bytes)
 
-    windows: List[FirefoxWindow] = []
+    windows: list[FirefoxWindow] = []
 
     for window_data in data.get("windows", []):
-        tabs: List[FirefoxTab] = []
+        tabs: list[FirefoxTab] = []
         for tab_data in window_data.get("tabs", []):
-            entries: List[FirefoxNavigationEntry] = []
+            entries: list[FirefoxNavigationEntry] = []
             for entry_data in tab_data.get("entries", []):
                 entry = FirefoxNavigationEntry(
                     url=entry_data.get("url", ""),
@@ -109,12 +108,16 @@ def find_latest_recovery_file(directory: str) -> Optional[Path]:
     Searches the given directory recursively for Firefox session files (e.g., recovery*.jsonlz4 or previous.jsonlz4)
     and returns the path to the most recently modified one.
 
+    This function looks for files matching the patterns "recovery*.jsonlz4" and "previous.jsonlz4".
+    If multiple files are found, it returns the one with the latest modification time.
+
     Args:
         directory (str): The directory to search for session files.
 
     Returns:
         Optional[Path]: Path to the most recent recovery file, or None if none found.
     """
+
     session_path = Path(directory)
     if not session_path.exists():
         return None
@@ -126,21 +129,3 @@ def find_latest_recovery_file(directory: str) -> Optional[Path]:
         return None
 
     return max(candidates, key=lambda f: f.stat().st_mtime)
-
-
-if __name__ == "__main__":
-    session_path = find_latest_recovery_file(
-        "/home/host/snap/firefox/common/.mozilla/firefox/7oq7in7a.default/sessionstore-backups"
-    )
-
-    if session_path is None:
-        print("No recovery.lz4 files found")
-        exit(1)
-
-    windows = parse_jsonlz4_file(session_path)
-    for window in windows:
-        for tab in window.tabs:
-            print(tab)
-            # current = tab.current_entry()
-            # if current:
-            #     print(f"{current.title} — {current.url}")

@@ -1,0 +1,3 @@
+psutil
+lz4
+rich

@@ -28,12 +28,12 @@ class FirefoxTab(base_structures.BaseTab[FirefoxNavigationEntry]):
     Attributes:
         entries (List[FirefoxNavigationEntry]): The list of navigation entries (tab history).
         index (int): The index of the current navigation entry.
-        pinned (Optional[bool]): Whether the tab is pinned.
-        is_hidden (Optional[bool]): Whether the tab is hidden in the tab strip.
+        pinned (bool): Whether the tab is pinned.
+        is_hidden (bool): Whether the tab is hidden in the tab strip.
     """
 
-    pinned: Optional[bool] = False
-    is_hidden: Optional[bool] = False
+    pinned: bool = False
+    is_hidden: bool = False
 
 
 @dataclass
