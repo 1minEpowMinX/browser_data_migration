@@ -28,7 +28,14 @@ help_text = """
 """
 
 
-def main_menu():
+def main_menu() -> None:
+    """
+    The main CLI application menu.
+
+    This function displays a menu with options for exporting and importing browser data,
+    as well as displaying help information.
+    """
+
     while True:
         console.clear()
         console.print()
@@ -51,28 +58,10 @@ def main_menu():
         match choice:
             case 1:
                 with status_bar("Экспорт данных браузера"):
-                    try:
-                        console.print(
-                            "\n[bold green]Начинается экспорт данных...[/bold green]"
-                        )
-                        browser_data_export()
-                        console.print(
-                            "[bold green]Экспорт успешно завершен![/bold green]"
-                        )
-                    except Exception as e:
-                        console.print(f"[bold red]Ошибка при экспорте: {e}[/bold red]")
+                    browser_data_export()
             case 2:
                 with status_bar("Импорт данных браузера"):
-                    try:
-                        console.print(
-                            "\n[bold green]Начинается импорт данных...[/bold green]"
-                        )
-                        browser_data_import()
-                        console.print(
-                            "[bold green]Импорт успешно завершен![/bold green]"
-                        )
-                    except Exception as e:
-                        console.print(f"[bold red]Ошибка при импорте: {e}[/bold red]")
+                    browser_data_import()
             case 3:
                 console.print(
                     Panel(
