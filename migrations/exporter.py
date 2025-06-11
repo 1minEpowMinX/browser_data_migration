@@ -161,4 +161,4 @@ def browser_data_export(session_file: str = "browser_data.json") -> None:
         print_success(f"Данные браузеров успешно экспортированы в {session_file}")
     except Exception as e:
         logger.error(f"Error exporting data: {e}")
-        print_error(f"Ошибка при экспорте данных: {e}")
+        raise  # throw exception to be caught in status_bar
