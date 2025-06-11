@@ -9,12 +9,14 @@ def create_default_json() -> dict:
 
     This function initializes a JSON structure with default values for browsers,
     including their running status, tabs, profile paths, executable paths, and export paths.
+    Additionally it sets minimal app configuration.
 
     Returns:
         dict: The default JSON structure.
     """
 
     return {
+        "ui_language": "en",  # "en" or "ru" at the moment
         "timestamp": datetime.now().isoformat(),
         "browsers": {
             "Firefox": {
