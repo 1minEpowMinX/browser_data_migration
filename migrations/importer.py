@@ -142,8 +142,8 @@ def browser_data_import(session_file: str = "browser_data.json") -> None:
             if urls:
                 launch_browser_tabs(browser_name, urls, browser_data)
 
-        logger.info("Browser data import completed.")
-        print_success("Импорт данных браузера завершен.")
+        logger.info("Browser data imported from {session_file}.")
+        print_success("Данные браузеров успешно импортированы из {session_file}.")
     except Exception as e:
         logger.error(f"Error importing browser data: {e}")
-        print_error(f"Ошибка при импорте данных браузера: {e}")
+        raise  # throw exception to be caught in status_bar
