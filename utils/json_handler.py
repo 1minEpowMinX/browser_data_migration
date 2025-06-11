@@ -9,7 +9,7 @@ def create_default_json() -> dict:
 
     This function initializes a JSON structure with default values for browsers,
     including their running status, tabs, profile paths, executable paths, and export paths.
-    Additionally it sets minimal app configuration.
+    Additionally it sets minimal application configuration.
 
     Returns:
         dict: The default JSON structure.
