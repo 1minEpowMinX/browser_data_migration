@@ -6,7 +6,7 @@ from session_parsers.chromium_parser import find_latest_snss_file, parse_snss_fi
 from session_parsers.firefox_parser import find_latest_recovery_file, parse_jsonlz4_file
 from structrues.chormium_structures import ChromiumTab
 from structrues.firefox_structures import FirefoxTab
-from utils.browser_paths import get_browser_profile_path, safe_ignore_errors
+from utils.get_browser_profile_paths import get_browser_profile_path, safe_ignore_errors
 from utils.check_browser_status import is_browser_running, kill_browser_process
 from utils.json_handler import create_default_json, save_to_json
 from utils.logger import logger
