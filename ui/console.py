@@ -48,12 +48,12 @@ def print_error(text: str) -> None:
     console.print(f"[bold red]✖ {text}[/]")
 
 
-def print_info(text: str) -> None:
-    """
-    Prints an info message in the console.
+# def print_info(text: str) -> None:
+#     """
+#     Prints an info message in the console.
 
-    Args:
-        text (str): The info message to print.
-    """
+#     Args:
+#         text (str): The info message to print.
+#     """
 
-    console.print(f"[bold cyan] {text}[/]")
+#     console.print(f"[bold cyan] {text}[/]")
