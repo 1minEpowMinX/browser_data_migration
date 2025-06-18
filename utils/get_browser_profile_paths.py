@@ -63,7 +63,7 @@ def select_user_profile(profiles: list[Path]) -> Optional[Path]:
     if not profiles:
         raise ValueError("No user profiles found.")
 
-    console.print("\n[bold cyan]ыберите профиль пользователя:[/bold cyan]")
+    console.print("\n[bold cyan]Выберите профиль пользователя:[/bold cyan]")
     for idx, profile in enumerate(profiles, start=1):
         console.print(f"[green]{idx}.[/green] {profile.name}")
 
