@@ -101,31 +101,3 @@ def parse_jsonlz4_file(path: Path | str) -> list[FirefoxWindow]:
         windows.append(window)
 
     return windows
-
-
-def find_latest_recovery_file(directory: str) -> Optional[Path]:
-    """
-    Searches the given directory recursively for Firefox session files (e.g., recovery*.jsonlz4 or previous.jsonlz4)
-    and returns the path to the most recently modified one.
-
-    This function looks for files matching the patterns "recovery*.jsonlz4" and "previous.jsonlz4".
-    If multiple files are found, it returns the one with the latest modification time.
-
-    Args:
-        directory (str): The directory to search for session files.
-
-    Returns:
-        Optional[Path]: Path to the most recent recovery file, or None if none found.
-    """
-
-    session_path = Path(directory)
-    if not session_path.exists():
-        return None
-
-    candidates = list(session_path.rglob("recovery*.jsonlz4")) + list(
-        session_path.rglob("previous.jsonlz4")
-    )
-    if not candidates:
-        return None
-
-    return max(candidates, key=lambda f: f.stat().st_mtime)
