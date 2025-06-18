@@ -54,7 +54,7 @@ def select_user_profile(profiles: list[Path]) -> Optional[Path]:
 
     Raises:
         ValueError: If no user profiles are found.
-        Exception: If there is an error selecting the user profile.
+        Exception: Throwing the exception above.
 
     Returns:
         Optional[Path]: The selected user profile path, or None if no profile is selected.
@@ -65,7 +65,7 @@ def select_user_profile(profiles: list[Path]) -> Optional[Path]:
 
     console.print("\n[bold cyan]Выберите профиль пользователя:[/bold cyan]")
     for idx, profile in enumerate(profiles, start=1):
-        console.print(f"[green]{idx}.[/green] {profile.name}")
+        console.print(f"[bold green]{idx}.[/bold green] {profile.name}")
 
     while True:
         try:
