@@ -6,7 +6,6 @@ from typing import Optional, Iterable
 from ui.console import (
     console,
     print_warning,
-    print_info,
 )
 
 WINDOWS_CHROME = Path("AppData/Local/Google/Chrome/User Data")
@@ -24,6 +23,9 @@ def get_user_profiles() -> list[Path]:
 
     This function returns a list of user profile names for the current operating system.
     It uses environment variables for Windows paths and expands user directories for Linux paths.
+
+    Raises:
+        NotImplementedError: If the operating system is unknown.
 
     Returns:
         list[str]: A list of user profile names.
@@ -52,6 +54,7 @@ def select_user_profile(profiles: list[Path]) -> Optional[Path]:
 
     Raises:
         ValueError: If no user profiles are found.
+        Exception: If there is an error selecting the user profile.
 
     Returns:
         Optional[Path]: The selected user profile path, or None if no profile is selected.
@@ -60,7 +63,7 @@ def select_user_profile(profiles: list[Path]) -> Optional[Path]:
     if not profiles:
         raise ValueError("No user profiles found.")
 
-    print_info("\nВыберите профиль пользователя: ")
+    console.print("\n[bold cyan]ыберите профиль пользователя:[/bold cyan]")
     for idx, profile in enumerate(profiles, start=1):
         console.print(f"[green]{idx}.[/green] {profile.name}")
 
@@ -84,17 +87,18 @@ def get_browser_profile_path(user_path: Path, browser: str) -> Optional[Path]:
     """
     Get the default path for browser profiles based on the operating system and browser type.
 
-    This function returns the path to the browser profile directory for Chrome, Edge, or Firefox.
-    It uses environment variables for Windows paths and expands user directories for Linux paths.
+    This function determines the default path for browser profiles based on the operating system
+    and browser type (e.g., Chrome, Edge, Firefox).
 
     Args:
+        user_path (Path): The path to the user directory.
         browser (str): The name of the browser (e.g., "Chrome", "Edge", "Firefox").
 
     Raises:
         NotImplementedError: If the browser is unknown or not supported on the current OS.
 
     Returns:
-        str: The path to the browser profile directory, or None if the browser is not supported.
+        Optional[Path]: The path to the browser profile directory, or None if the browser is not supported.
     """
 
     match system():
