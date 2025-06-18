@@ -2,11 +2,16 @@ from pathlib import Path
 from shutil import copytree
 from typing import Optional
 
-from session_parsers.chromium_parser import find_latest_snss_file, parse_snss_file
-from session_parsers.firefox_parser import find_latest_recovery_file, parse_jsonlz4_file
+from session_parsers.chromium_parser import parse_snss_file
+from session_parsers.firefox_parser import parse_jsonlz4_file
 from structrues.chormium_structures import ChromiumTab
 from structrues.firefox_structures import FirefoxTab
-from utils.get_browser_profile_paths import get_browser_profile_path, safe_ignore_errors
+from utils.get_browser_profile_paths import (
+    get_browser_profile_path,
+    safe_ignore_errors,
+    find_latest_snss_file,
+    find_latest_recovery_file,
+)
 from utils.check_browser_status import is_browser_running, kill_browser_process
 from utils.json_handler import create_default_json, save_to_json
 from utils.logger import logger
@@ -80,7 +85,7 @@ def export_profile_files(browser: str, profile_path: Path, output_root: Path) ->
         raise RuntimeError(f"Ошибка при экспорте профиля {browser}: {e}")
 
 
-def get_browser_data(json: dict, browser: str) -> None:
+def get_browser_data(user_profile_path: Path, json: dict, browser: str) -> None:
     """
     Retrieves browser session data for the specified browser and updates the JSON structure.
 
@@ -93,13 +98,14 @@ def get_browser_data(json: dict, browser: str) -> None:
     """
 
     try:
-        profile_path = get_browser_profile_path(browser)
-        json["browsers"][browser]["profile_path"] = profile_path
+        profile_path = get_browser_profile_path(user_profile_path, browser)
         if not profile_path:
             logger.warning(f"Profile path for {browser} not found.")
             print_warning(f"Путь профиля для {browser} не найден.")
-
             return
+
+        json["browsers"][browser]["profile_path"] = profile_path.as_posix()
+
         if browser == "Firefox":
             recovery_file = find_latest_recovery_file(profile_path)
             if recovery_file:
@@ -129,10 +135,12 @@ def get_browser_data(json: dict, browser: str) -> None:
     except Exception as e:
         logger.error(f"Error retrieving data for {browser}: {e}")
         print_error(f"Ошибка при получении данных для {browser}: {e}")
-        return
+        raise
 
 
-def browser_data_export(session_file: str = "browser_data.json") -> None:
+def browser_data_export(
+    user_profile_path: Path, session_file: str = "browser_data.json"
+) -> None:
     """
     Exports browser session data for all supported browsers into a JSON file.
 
@@ -154,7 +162,7 @@ def browser_data_export(session_file: str = "browser_data.json") -> None:
                 logger.info(f"{browser} is running, killing the process.")
                 print_warning(f"{browser} запущен, процесс будет завершен.")
                 kill_browser_process(browser)
-            get_browser_data(json, browser)
+            get_browser_data(user_profile_path, json, browser)
 
         save_to_json(json, session_file)
         logger.info(f"Browser data exported to {session_file}")
