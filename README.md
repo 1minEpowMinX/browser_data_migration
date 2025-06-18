@@ -26,7 +26,7 @@ The tool saves currently open tabs and browser profiles, including settings, ext
 
 ### 📦 Export Data
 1. Run the utility and select `1. Export Data`.
-2. Choose target profile from your PC.
+2. Choose target profile from PC.
 3. The program will detect installed browsers and save:
    - a `browser_data.json` file;
    - directories with browser profiles.
