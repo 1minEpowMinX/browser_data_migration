@@ -78,7 +78,7 @@
 ---
 
 ## 📁 Структура проекта
-```css
+```
 browser-data-migration/
 ├── assets/
 │   ├── Project_icon_DALL.E.ico
