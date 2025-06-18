@@ -6,13 +6,13 @@ from session_parsers.chromium_parser import parse_snss_file
 from session_parsers.firefox_parser import parse_jsonlz4_file
 from structrues.chormium_structures import ChromiumTab
 from structrues.firefox_structures import FirefoxTab
+from utils.check_browser_status import is_browser_running, kill_browser_process
 from utils.get_browser_profile_paths import (
-    get_browser_profile_path,
-    safe_ignore_errors,
     find_latest_snss_file,
     find_latest_recovery_file,
+    get_browser_profile_path,
+    safe_ignore_errors,
 )
-from utils.check_browser_status import is_browser_running, kill_browser_process
 from utils.json_handler import create_default_json, save_to_json
 from utils.logger import logger
 from ui.console import (
@@ -92,6 +92,9 @@ def get_browser_data(user_profile_path: Path, json: dict, browser: str) -> None:
     This function checks the browser's profile path, retrieves the latest session files,
     parses the session data, and updates the provided JSON structure with the browser's.
 
+    Raises:
+        Exception: Throwing the exception above.
+
     Args:
         json (dict): The JSON structure to update with browser data.
         browser (str): The name of the browser to retrieve data for.
@@ -142,12 +145,16 @@ def browser_data_export(
     user_profile_path: Path, session_file: str = "browser_data.json"
 ) -> None:
     """
-    Exports browser session data for all supported browsers into a JSON file.
+    Exports browser session data from user profile for all supported browsers into a JSON file.
 
     This function checks if each browser is running, kills the process if it is,
     retrieves the session data, and saves it to a JSON file named 'browser_data.json'.
 
+    Raises:
+        Exception: Throwing the exception above.
+
     Args:
+        user_profile_path (Path): The path to the user's profile directory.
         session_file (str): The name of the JSON file to save the exported data. Default is "browser_data.json".
     """
 
