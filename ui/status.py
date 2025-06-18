@@ -17,7 +17,8 @@ def status_bar(message: str, spinner: str = "dots") -> Generator[None, None, Non
         Generator[None, None, None]: None.
     """
 
-    console.log(f"\n[green]{message} запущен...[/green]")
+    console.print()
+    console.log(f"[green]{message} запущен...[/green]")
     try:
         with console.status(f"[cyan]{message}...", spinner=spinner):
             yield
