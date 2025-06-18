@@ -48,6 +48,7 @@ def restore_profile_files(export_path: Path | str, profile_path: Path | str) -> 
     except Exception as e:
         logger.error(f"Error restoring profile: {e}")
         print_error(f"Ошибка при восстановлении профиля: {e}")
+        raise
 
 
 def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> None:
@@ -101,6 +102,7 @@ def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> No
     except Exception as e:
         logger.error(f"Failed to open tabs in {browser}: {e}")
         print_error(f"Не удалось открыть вкладки в {browser}: {e}")
+        raise
 
 
 def browser_data_import(session_file: str = "browser_data.json") -> None:
