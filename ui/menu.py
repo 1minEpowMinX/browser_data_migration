@@ -1,3 +1,4 @@
+from pathlib import Path
 from rich.panel import Panel
 from rich.prompt import IntPrompt
 
@@ -30,12 +31,48 @@ help_text = """
 """
 
 
+def get_valid_user_profile(action: str) -> Path:
+    """
+    Get a valid user profile path.
+
+    This function prompts the user to select a user profile and returns the selected path.
+    If no user profiles are found, it raises an exception.
+
+    Args:
+        action (str): The action to perform on the user profile.
+
+    Raises:
+        RuntimeError: If the user profile path is not valid.
+
+    Returns:
+        Path: The valid user profile path.
+    """
+
+    try:
+        user_profiles = get_user_profiles()
+        if not user_profiles:
+            logger.error(f"User profiles not found to {action} data.")
+            raise RuntimeError(f"User profiles not found to {action} data.")
+
+        user_profile_path = select_user_profile(user_profiles)
+        if not user_profile_path:
+            logger.error(f"User profile not selected to {action} data.")
+            raise RuntimeError(f"User profile not selected to {action} data.")
+
+        return user_profile_path
+    except Exception as e:
+        raise RuntimeError(f"Ошибка выбора профиля: {e}")
+
+
 def main_menu() -> None:
     """
     The main CLI application menu.
 
     This function displays a menu with options for exporting and importing browser data,
     as well as displaying help information.
+
+    Raises:
+        RuntimeError: If the user profile path is not valid.
     """
 
     while True:
@@ -54,7 +91,7 @@ def main_menu() -> None:
         )
 
         choice = IntPrompt.ask(
-            "\n[bold cyan]Выберите действие[/bold cyan]",
+            "\n[bold cyan]Выберите действие:[/bold cyan]",
             default=3,
             choices=["1", "2", "3", "0"],
         )
@@ -62,23 +99,30 @@ def main_menu() -> None:
         match choice:
             case 1:
                 try:
-                    user_profiles = get_user_profiles()
-                    if not user_profiles:
-                        logger.error("User profiles not found to export data.")
-                        raise RuntimeError("User profiles not found to export data.")
-
-                    user_profile_path = select_user_profile(user_profiles)
-                    if not user_profile_path:
-                        logger.error(f"User profile not selected to export data.")
-                        raise RuntimeError("User profile not selected to export data.")
+                    user_profile_path = get_valid_user_profile("export")
                 except Exception as e:
                     raise RuntimeError(f"Ошибка выбора профиля: {e}")
 
                 with status_bar("Экспорт данных браузера"):
                     browser_data_export(user_profile_path)
             case 2:
+                console.print(
+                    "\n[bold cyan]Выберите режим:\n[/bold cyan][bold green]1.[/bold green] Использовать путь из JSON\n[green]2.[/green] Выбрать профиль вручную\n"
+                )
+
+                choice = IntPrompt.ask(
+                    "\n[bold cyan]Выберите действие:[/bold cyan]",
+                    default=1,
+                    choices=["1", "2"],
+                )
+
+                try:
+                    user_profile_path = get_valid_user_profile("import")
+                except Exception as e:
+                    raise RuntimeError(f"Ошибка выбора профиля: {e}")
+
                 with status_bar("Импорт данных браузера"):
-                    browser_data_import()
+                    browser_data_import(user_profile_path)
             case 3:
                 console.print(
                     Panel(
