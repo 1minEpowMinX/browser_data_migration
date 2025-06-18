@@ -217,29 +217,3 @@ def parse_snss_file(path: Path | str) -> ChromiumWindow:
 
     window = ChromiumWindow(tabs=list(tabs.values()))
     return window
-
-
-def find_latest_snss_file(directory: str) -> Optional[Path]:
-    """
-    Searches the given directory recursively for Chrome SNSS session files
-    and returns the path to the most recently modified one.
-
-    This function looks for files matching the pattern "Session_*" within the specified directory.
-    If multiple files are found, it returns the one with the latest modification time.
-
-    Args:
-        directory (str): Root directory to search.
-
-    Returns:
-        Optional[Path]: Path to the newest SNSS file, or None if not found.
-    """
-
-    session_path = Path(directory)
-    if not session_path.exists():
-        return None
-
-    session_files = list(session_path.rglob("Session_*"))
-    if not session_files:
-        return None
-
-    return max(session_files, key=lambda p: p.stat().st_mtime)
