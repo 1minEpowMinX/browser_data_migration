@@ -26,21 +26,20 @@ The tool saves currently open tabs and browser profiles, including settings, ext
 
 ### 📦 Export Data
 1. Run the utility and select `1. Export Data`.
-2. The program will detect installed browsers and save:
+2. Choose target profile from PC.
+3. The program will detect installed browsers and save:
    - a `browser_data.json` file;
    - directories with browser profiles.
 
 ### 📥 Import Data
 1. Transfer `browser_data.json` and profile folders to the new computer.
 2. Run the utility and select `2. Import Data`.
+3. The utility will ask about the import method. Select the one what you need.
 
 ---
 
 ## ⚠️ Important Notes
-
-- Make sure to transfer data **between matching user profiles** (e.g., same user name).
-- You can manually edit the `browser_data.json` file if needed — specifically the  
-  `["browsers"][<browser_name>]["export_path"]` value.
+- You can manually edit the `browser_data.json` file if needed.
 - **Keep the browser open** if you want tabs to auto-**restore** — the utility will close it automatically at the right time.
 
 ---
@@ -48,7 +47,6 @@ The tool saves currently open tabs and browser profiles, including settings, ext
 ## 🛠️ Installation
 
 ### 🖥️ Windows
-
 1. Go to the [Releases](https://github.com/1minEpowMinX/browser_data_migration/releases) tab.
 2. Download the `browser-data-migration.exe` file.
 3. Run the `.exe` — no installation required.
@@ -58,7 +56,6 @@ The tool saves currently open tabs and browser profiles, including settings, ext
 <br>
 
 ### 🐍 Install from source (Windows & Linux)
-
 1. Make sure **Python 3.9+** is installed.
 2. Clone the repository:
 
@@ -82,7 +79,6 @@ The tool saves currently open tabs and browser profiles, including settings, ext
 ---
 
 ## 📁 Project Structure
-
 ```css
 browser-data-migration/
 ├── assets/
@@ -100,6 +96,7 @@ browser-data-migration/
 ├── ui/
 │   ├── console.py
 │   ├── menu.py
+│   ├── messages.py
 │   ├── status.py
 ├── utils/
 │   ├── browser_paths.py
@@ -107,8 +104,9 @@ browser-data-migration/
 │   ├── json_handler.py
 │   ├── logger.py
 ├── LICENSE
-├── main.py
 ├── README.md
+├── README.ru.md
+├── main.py
 ├── requirements.txt
 ```
 
