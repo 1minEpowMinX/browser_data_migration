@@ -2,19 +2,20 @@ import platform
 from pathlib import Path
 from psutil import Popen
 from shutil import copytree, rmtree, which
+from typing import Optional
 
-from utils.json_handler import load_from_json
-from utils.check_browser_status import (
-    BROWSERS,
-    is_browser_running,
-    kill_browser_process,
-)
-from utils.logger import logger
 from ui.console import (
     print_success,
     print_warning,
     print_error,
 )
+from utils.check_browser_status import (
+    BROWSERS,
+    is_browser_running,
+    kill_browser_process,
+)
+from utils.json_handler import load_from_json
+from utils.logger import logger
 
 
 def restore_profile_files(export_path: Path | str, profile_path: Path | str) -> None:
@@ -23,6 +24,9 @@ def restore_profile_files(export_path: Path | str, profile_path: Path | str) -> 
 
     This function checks if the export path exists, and if so, it copies the contents
     to the profile path, removing any existing profile directory first.
+
+    Raises:
+        Exception: Throwing the exception above.
 
     Args:
         export_path (Path | str): The path to the exported profile directory.
@@ -57,6 +61,9 @@ def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> No
 
     This function checks if the browser is available, constructs the command to open
     the URLs in new tabs, and executes it. If the browser is not found, it prints an error message.
+
+    Raises:
+        Exception: Throwing the exception above.
 
     Args:
         browser (str): The name of the browser to use.
@@ -105,14 +112,21 @@ def launch_browser_tabs(browser: str, urls: list[str], browser_data: dict) -> No
         raise
 
 
-def browser_data_import(session_file: str = "browser_data.json") -> None:
+def browser_data_import(
+    user_profile_path: Optional[Path], session_file: str = "browser_data.json"
+) -> None:
     """
     Imports browser session data from a JSON file and restores the profiles.
 
-    This function reads the session data from the specified JSON file, checks if the
-    browsers are running, and if so, kills their processes. It then restores the profiles.
+    This function reads the session data from the specified JSON file, checks if the user profile path is provided,
+    and if not, use default path from the data. It then checks if any of the browsers in the data
+    are running, and if so, kills their processes. It then restores the profiles.
+
+    Raises:
+        Exception: Throwing the exception above.
 
     Args:
+        user_profile_path (Optional[Path]): The path to the user profile directory.
         session_file (str): The path to the JSON file containing browser session data. Default is "browser_data.json".
     """
 
@@ -122,6 +136,11 @@ def browser_data_import(session_file: str = "browser_data.json") -> None:
         data = load_from_json(session_file)
 
         for browser_name, browser_data in data["browsers"].items():
+            if (
+                user_profile_path != None
+                and browser_data.get("profile_path") != user_profile_path
+            ):
+                browser_data["profile_path"] = user_profile_path
             if is_browser_running(browser_name):
                 logger.info(f"{browser_name} is running, killing the process.")
                 print_warning(f"{browser_name} запущен, процесс будет завершен.")
