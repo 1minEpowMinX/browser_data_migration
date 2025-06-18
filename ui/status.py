@@ -5,7 +5,7 @@ from ui.console import console
 
 
 @contextmanager
-def status_bar(message: str, spinner: str = "dots") -> Generator[None]:
+def status_bar(message: str, spinner: str = "dots") -> Generator[None, None, None]:
 
     console.log(f"[green]{message} запущен...[/green]")
     try:
