@@ -2,12 +2,17 @@ from pathlib import Path
 from shutil import copytree
 from typing import Optional
 
-from session_parsers.chromium_parser import find_latest_snss_file, parse_snss_file
-from session_parsers.firefox_parser import find_latest_recovery_file, parse_jsonlz4_file
+from session_parsers.chromium_parser import parse_snss_file
+from session_parsers.firefox_parser import parse_jsonlz4_file
 from structrues.chormium_structures import ChromiumTab
 from structrues.firefox_structures import FirefoxTab
-from utils.browser_paths import get_browser_profile_path, safe_ignore_errors
 from utils.check_browser_status import is_browser_running, kill_browser_process
+from utils.get_browser_profile_paths import (
+    find_latest_snss_file,
+    find_latest_recovery_file,
+    get_browser_profile_path,
+    safe_ignore_errors,
+)
 from utils.json_handler import create_default_json, save_to_json
 from utils.logger import logger
 from ui.console import (
@@ -80,12 +85,15 @@ def export_profile_files(browser: str, profile_path: Path, output_root: Path) ->
         raise RuntimeError(f"Ошибка при экспорте профиля {browser}: {e}")
 
 
-def get_browser_data(json: dict, browser: str) -> None:
+def get_browser_data(user_profile_path: Path, json: dict, browser: str) -> None:
     """
     Retrieves browser session data for the specified browser and updates the JSON structure.
 
     This function checks the browser's profile path, retrieves the latest session files,
     parses the session data, and updates the provided JSON structure with the browser's.
+
+    Raises:
+        Exception: Throwing the exception above.
 
     Args:
         json (dict): The JSON structure to update with browser data.
@@ -93,13 +101,14 @@ def get_browser_data(json: dict, browser: str) -> None:
     """
 
     try:
-        profile_path = get_browser_profile_path(browser)
-        json["browsers"][browser]["profile_path"] = profile_path
+        profile_path = get_browser_profile_path(user_profile_path, browser)
         if not profile_path:
             logger.warning(f"Profile path for {browser} not found.")
             print_warning(f"Путь профиля для {browser} не найден.")
-
             return
+
+        json["browsers"][browser]["profile_path"] = profile_path.as_posix()
+
         if browser == "Firefox":
             recovery_file = find_latest_recovery_file(profile_path)
             if recovery_file:
@@ -129,17 +138,23 @@ def get_browser_data(json: dict, browser: str) -> None:
     except Exception as e:
         logger.error(f"Error retrieving data for {browser}: {e}")
         print_error(f"Ошибка при получении данных для {browser}: {e}")
-        return
+        raise
 
 
-def browser_data_export(session_file: str = "browser_data.json") -> None:
+def browser_data_export(
+    user_profile_path: Path, session_file: str = "browser_data.json"
+) -> None:
     """
-    Exports browser session data for all supported browsers into a JSON file.
+    Exports browser session data from user profile for all supported browsers into a JSON file.
 
     This function checks if each browser is running, kills the process if it is,
     retrieves the session data, and saves it to a JSON file named 'browser_data.json'.
 
+    Raises:
+        Exception: Throwing the exception above.
+
     Args:
+        user_profile_path (Path): The path to the user's profile directory.
         session_file (str): The name of the JSON file to save the exported data. Default is "browser_data.json".
     """
 
@@ -154,11 +169,11 @@ def browser_data_export(session_file: str = "browser_data.json") -> None:
                 logger.info(f"{browser} is running, killing the process.")
                 print_warning(f"{browser} запущен, процесс будет завершен.")
                 kill_browser_process(browser)
-            get_browser_data(json, browser)
+            get_browser_data(user_profile_path, json, browser)
 
         save_to_json(json, session_file)
         logger.info(f"Browser data exported to {session_file}")
         print_success(f"Данные браузеров успешно экспортированы в {session_file}")
     except Exception as e:
         logger.error(f"Error exporting data: {e}")
-        print_error(f"Ошибка при экспорте данных: {e}")
+        raise  # throw exception to be caught in status_bar

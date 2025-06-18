@@ -1,3 +1,4 @@
+from pathlib import Path
 from rich.panel import Panel
 from rich.prompt import IntPrompt
 
@@ -5,6 +6,8 @@ from migrations.exporter import browser_data_export
 from migrations.importer import browser_data_import
 from ui.console import console
 from ui.status import status_bar
+from utils.get_browser_profile_paths import get_user_profiles, select_user_profile
+from utils.logger import logger
 
 
 help_text = """
@@ -28,7 +31,50 @@ help_text = """
 """
 
 
-def main_menu():
+def get_valid_user_profile(action: str) -> Path:
+    """
+    Get a valid user profile path.
+
+    This function prompts the user to select a user profile and returns the selected path.
+    If no user profiles are found, it raises an exception.
+
+    Args:
+        action (str): The action to perform on the user profile.
+
+    Raises:
+        RuntimeError: If the user profile path is not valid.
+
+    Returns:
+        Path: The valid user profile path.
+    """
+
+    try:
+        user_profiles = get_user_profiles()
+        if not user_profiles:
+            logger.error(f"User profiles not found to {action} data.")
+            raise RuntimeError(f"User profiles not found to {action} data.")
+
+        user_profile_path = select_user_profile(user_profiles)
+        if not user_profile_path:
+            logger.error(f"User profile not selected to {action} data.")
+            raise RuntimeError(f"User profile not selected to {action} data.")
+
+        return user_profile_path
+    except Exception as e:
+        raise RuntimeError(f"Ошибка выбора профиля: {e}")
+
+
+def main_menu() -> None:
+    """
+    The main CLI application menu.
+
+    This function displays a menu with options for exporting and importing browser data,
+    as well as displaying help information.
+
+    Raises:
+        RuntimeError: If the user profile path is not valid.
+    """
+
     while True:
         console.clear()
         console.print()
@@ -45,34 +91,38 @@ def main_menu():
         )
 
         choice = IntPrompt.ask(
-            "\n[bold green]Выберите действие[/bold green]", choices=["1", "2", "3", "0"]
+            "\n[bold cyan]Выберите действие:[/bold cyan]",
+            default=3,
+            choices=["1", "2", "3", "0"],
         )
 
         match choice:
             case 1:
+                try:
+                    user_profile_path = get_valid_user_profile("export")
+                except Exception as e:
+                    raise RuntimeError(f"Ошибка выбора профиля: {e}")
+
                 with status_bar("Экспорт данных браузера"):
-                    try:
-                        console.print(
-                            "\n[bold green]Начинается экспорт данных...[/bold green]"
-                        )
-                        browser_data_export()
-                        console.print(
-                            "[bold green]Экспорт успешно завершен![/bold green]"
-                        )
-                    except Exception as e:
-                        console.print(f"[bold red]Ошибка при экспорте: {e}[/bold red]")
+                    browser_data_export(user_profile_path)
             case 2:
+                console.print(
+                    "\n[bold cyan]Выберите режим:\n[/bold cyan][bold green]1.[/bold green] Использовать путь из JSON\n[green]2.[/green] Выбрать профиль вручную\n"
+                )
+
+                choice = IntPrompt.ask(
+                    "\n[bold cyan]Выберите действие:[/bold cyan]",
+                    default=1,
+                    choices=["1", "2"],
+                )
+
+                try:
+                    user_profile_path = get_valid_user_profile("import")
+                except Exception as e:
+                    raise RuntimeError(f"Ошибка выбора профиля: {e}")
+
                 with status_bar("Импорт данных браузера"):
-                    try:
-                        console.print(
-                            "\n[bold green]Начинается импорт данных...[/bold green]"
-                        )
-                        browser_data_import()
-                        console.print(
-                            "[bold green]Импорт успешно завершен![/bold green]"
-                        )
-                    except Exception as e:
-                        console.print(f"[bold red]Ошибка при импорте: {e}[/bold red]")
+                    browser_data_import(user_profile_path)
             case 3:
                 console.print(
                     Panel(
