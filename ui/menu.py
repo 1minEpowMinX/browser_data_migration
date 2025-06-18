@@ -74,6 +74,8 @@ def main_menu() -> None:
         RuntimeError: If the user profile path is not valid.
     """
 
+    user_profile_path = None
+
     while True:
         console.clear()
         console.print()
@@ -114,11 +116,11 @@ def main_menu() -> None:
                     default=1,
                     choices=["1", "2"],
                 )
-
-                try:
-                    user_profile_path = get_valid_user_profile("import")
-                except Exception as e:
-                    raise RuntimeError(f"Ошибка выбора профиля: {e}")
+                if choice == 2:
+                    try:
+                        user_profile_path = get_valid_user_profile("import")
+                    except Exception as e:
+                        raise RuntimeError(f"Ошибка выбора профиля: {e}")
 
                 with status_bar("Импорт данных браузера"):
                     browser_data_import(user_profile_path)
