@@ -10,11 +10,11 @@ from ui.console import (
 
 WINDOWS_CHROME = Path("AppData/Local/Google/Chrome/User Data")
 WINDOWS_EDGE = Path("AppData/Local/Microsoft/Edge/User Data")
-WINDOWS_FIREFOX = Path("AppData/Roaming/Mozilla/Firefox/Profiles")
+WINDOWS_FIREFOX = Path("AppData/Roaming/Mozilla")
 
 LINUX_CHROME = Path(".config/google-chrome")
 LINUX_EDGE = Path(".config/microsoft-edge")
-LINUX_FIREFOX = Path(".mozilla/firefox")
+LINUX_FIREFOX = Path("snap/firefox/common/.mozilla")
 
 
 def get_user_profiles() -> list[Path]:
