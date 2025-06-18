@@ -6,8 +6,18 @@ from ui.console import console
 
 @contextmanager
 def status_bar(message: str, spinner: str = "dots") -> Generator[None, None, None]:
+    """
+    Displays a status bar with a message and spinner.
 
-    console.log(f"[green]{message} запущен...[/green]")
+    Args:
+        message (str): The message to display.
+        spinner (str, optional): The spinner to use. Defaults to "dots".
+
+    Yields:
+        Generator[None, None, None]: None.
+    """
+
+    console.log(f"\n[green]{message} запущен...[/green]")
     try:
         with console.status(f"[cyan]{message}...", spinner=spinner):
             yield
