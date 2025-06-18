@@ -5,6 +5,8 @@ from migrations.exporter import browser_data_export
 from migrations.importer import browser_data_import
 from ui.console import console
 from ui.status import status_bar
+from utils.get_browser_profile_paths import get_user_profiles, select_user_profile
+from utils.logger import logger
 
 
 help_text = """
@@ -52,13 +54,28 @@ def main_menu() -> None:
         )
 
         choice = IntPrompt.ask(
-            "\n[bold green]Выберите действие[/bold green]", choices=["1", "2", "3", "0"]
+            "\n[bold cyan]Выберите действие[/bold cyan]",
+            default=3,
+            choices=["1", "2", "3", "0"],
         )
 
         match choice:
             case 1:
+                try:
+                    user_profiles = get_user_profiles()
+                    if not user_profiles:
+                        logger.error("User profiles not found to export data.")
+                        raise RuntimeError("User profiles not found to export data.")
+
+                    user_profile_path = select_user_profile(user_profiles)
+                    if not user_profile_path:
+                        logger.error(f"User profile not selected to export data.")
+                        raise RuntimeError("User profile not selected to export data.")
+                except Exception as e:
+                    raise RuntimeError(f"Ошибка выбора профиля: {e}")
+
                 with status_bar("Экспорт данных браузера"):
-                    browser_data_export()
+                    browser_data_export(user_profile_path)
             case 2:
                 with status_bar("Импорт данных браузера"):
                     browser_data_import()
