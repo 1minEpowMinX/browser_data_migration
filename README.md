@@ -79,7 +79,7 @@ The tool saves currently open tabs and browser profiles, including settings, ext
 ---
 
 ## 📁 Project Structure
-```css
+```
 browser-data-migration/
 ├── assets/
 │   ├── Project_icon_DALL.E.ico
