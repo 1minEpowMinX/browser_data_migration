@@ -11,7 +11,7 @@ from utils.get_browser_profile_paths import (
     find_latest_snss_file,
     find_latest_recovery_file,
     get_browser_profile_path,
-    safe_ignore_errors,
+    ignore_files,
 )
 from utils.json_handler import create_default_json, save_to_json
 from utils.logger import logger
@@ -75,7 +75,7 @@ def export_profile_files(browser: str, profile_path: Path, output_root: Path) ->
         copytree(
             profile_path,
             destination,
-            ignore=safe_ignore_errors,
+            ignore=lambda src, names: ignore_files(Path(src), names, browser),
             ignore_dangling_symlinks=True,
             dirs_exist_ok=True,
         )
