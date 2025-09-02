@@ -13,11 +13,11 @@ from utils.logger import logger
 
 WINDOWS_CHROME = Path("AppData/Local/Google/Chrome/User Data")
 WINDOWS_EDGE = Path("AppData/Local/Microsoft/Edge/User Data")
-WINDOWS_FIREFOX = Path("AppData/Roaming/Mozilla")
+WINDOWS_FIREFOX = Path("AppData/Roaming/Mozilla/Firefox/Profiles")
 
 LINUX_CHROME = Path(".config/google-chrome")
 LINUX_EDGE = Path(".config/microsoft-edge")
-LINUX_FIREFOX = Path("snap/firefox/common/.mozilla")
+LINUX_FIREFOX = Path("snap/firefox/common/.mozilla/firefox")
 
 
 def get_user_profiles() -> list[Path]:
@@ -145,7 +145,7 @@ def ignore_files(src: Path | str, names: list[str], browser: str) -> list[str]:
     """
 
     CHROMIUM_PROFILE_PATTERN = compile(r"Default|Profile\s\d+")
-    FIREFOX_PROFILE_PATTERN = compile(r"\w+\.default(-release)?")
+    FIREFOX_PROFILE_PATTERN = compile(r"\w+\.default(-esr)?")
 
     CHROMIUM_FILES = [
         "Bookmarks",
