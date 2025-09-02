@@ -149,10 +149,23 @@ def ignore_files(src: Path | str, names: list[str], browser: str) -> list[str]:
 
     CHROMIUM_FILES = [
         "Bookmarks",
+        "Bookmarks.bak",
         "Login Data",
+        "Login Data-journal",
         "Extensions",
+        "Extension State",
+        "Extension Rules",
+        "Extension Scripts",
+        "Preferences",
+        "Secure Preferences",
     ]
-    FIREFOX_FILES = ["places.sqlite", "logins.json", "key4.db", "extensions"]
+    FIREFOX_FILES = [
+        "places.sqlite",
+        "logins.json",
+        "key4.db",
+        "extensions",
+        "extensions.json",
+    ]
 
     allowed = FIREFOX_FILES if browser == "Firefox" else CHROMIUM_FILES
 
@@ -166,8 +179,6 @@ def ignore_files(src: Path | str, names: list[str], browser: str) -> list[str]:
             if browser == "Firefox"
             else CHROMIUM_PROFILE_PATTERN
         )
-
-        # Игнорировать всё, что не в разрешённом списке
         if (
             name not in allowed
             and not pattern.fullmatch(name)
@@ -175,10 +186,10 @@ def ignore_files(src: Path | str, names: list[str], browser: str) -> list[str]:
         ):
             ignore_list.append(name)
             continue
-
-        # Проверяем доступность файла
         if full_path.is_file():
-            if name not in allowed:
+            if name not in allowed and "extensions" not in str(full_path).lower():
+                if browser == "Firefox":
+                    print(full_path)
                 ignore_list.append(name)
                 continue
             try:
