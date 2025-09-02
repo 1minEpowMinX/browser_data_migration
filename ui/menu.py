@@ -1,3 +1,4 @@
+from os import system, name
 from pathlib import Path
 from rich.panel import Panel
 from rich.prompt import IntPrompt
@@ -28,6 +29,17 @@ help_text = """
   • если вы хотите, чтобы вкладки были автоматически восстановлены после переноса —
     не закрывайте браузер. Программа сделает это автоматически.
 """
+
+
+def clear_screen():
+    """
+    Clear the console screen.
+
+    This function is a wrapper around the `os.system` call to clear the console screen.
+    It uses the `cls` command on Windows and `clear` on Unix-like systems.
+    """
+
+    system("cls" if name == "nt" else "clear")
 
 
 def get_valid_user_profile(action: str) -> Path:
@@ -77,7 +89,7 @@ def main_menu() -> None:
     user_profile_path = None
 
     while True:
-        console.clear()
+        clear_screen()
         console.print()
         console.print(
             Panel.fit(
