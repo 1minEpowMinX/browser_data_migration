@@ -13,7 +13,7 @@ from utils.logger import logger
 
 WINDOWS_CHROME = Path("AppData/Local/Google/Chrome/User Data")
 WINDOWS_EDGE = Path("AppData/Local/Microsoft/Edge/User Data")
-WINDOWS_FIREFOX = Path("AppData/Roaming/Mozilla/Firefox/Profiles")
+WINDOWS_FIREFOX = Path("AppData/Roaming/Mozilla/Firefox/")
 
 LINUX_CHROME = Path(".config/google-chrome")
 LINUX_EDGE = Path(".config/microsoft-edge")
@@ -158,6 +158,10 @@ def ignore_files(src: Path | str, names: list[str], browser: str) -> list[str]:
         "Extension Scripts",
         "Preferences",
         "Secure Preferences",
+        "Shortcuts",
+        "Shortcuts-journal",
+        "History",
+        "History-journal",
     ]
     FIREFOX_FILES = [
         "places.sqlite",
@@ -165,6 +169,11 @@ def ignore_files(src: Path | str, names: list[str], browser: str) -> list[str]:
         "key4.db",
         "extensions",
         "extensions.json",
+        "profiles.ini",
+        "Profiles",
+        "prefs.js",
+        "handlers.json",
+        "xulstore.json",
     ]
 
     allowed = FIREFOX_FILES if browser == "Firefox" else CHROMIUM_FILES
