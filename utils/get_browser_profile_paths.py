@@ -1,20 +1,23 @@
-from utils.logger import logger
 from platform import system
 from pathlib import Path
 from rich.prompt import IntPrompt
+from regex import compile
 from typing import Optional, Iterable
+
+
 from ui.console import (
     console,
     print_warning,
 )
+from utils.logger import logger
 
 WINDOWS_CHROME = Path("AppData/Local/Google/Chrome/User Data")
 WINDOWS_EDGE = Path("AppData/Local/Microsoft/Edge/User Data")
-WINDOWS_FIREFOX = Path("AppData/Roaming/Mozilla")
+WINDOWS_FIREFOX = Path("AppData/Roaming/Mozilla/Firefox/Profiles")
 
 LINUX_CHROME = Path(".config/google-chrome")
 LINUX_EDGE = Path(".config/microsoft-edge")
-LINUX_FIREFOX = Path("snap/firefox/common/.mozilla")
+LINUX_FIREFOX = Path("snap/firefox/common/.mozilla/firefox")
 
 
 def get_user_profiles() -> list[Path]:
@@ -126,12 +129,12 @@ def get_browser_profile_path(user_path: Path, browser: str) -> Optional[Path]:
             raise NotImplementedError("Error: Unknown OS type")
 
 
-def safe_ignore_errors(src: Path | str, names: list[str]) -> list[str]:
+def ignore_files(src: Path | str, names: list[str], browser: str) -> list[str]:
     """
-    Safely ignore files that cannot be accessed in the source directory.
+    Ignore files that are not in the allowed list or cannot be accessed.
 
-    This function checks each file in the source directory and adds it to the ignore list
-    if it cannot be opened. This is useful for avoiding errors when copying files.
+    This function checks the files in the source directory against a predefined list of allowed files
+    for the specified browser (Chrome/Edge or Firefox). It also verifies if the files can be accessed.
 
     Args:
         src (Path | str): The source directory path.
@@ -141,18 +144,59 @@ def safe_ignore_errors(src: Path | str, names: list[str]) -> list[str]:
         list[str]: A list of file names that could not be accessed.
     """
 
+    CHROMIUM_PROFILE_PATTERN = compile(r"Default|Profile\s\d+")
+    FIREFOX_PROFILE_PATTERN = compile(r"\w+\.default(-esr)?")
+
+    CHROMIUM_FILES = [
+        "Bookmarks",
+        "Bookmarks.bak",
+        "Login Data",
+        "Login Data-journal",
+        "Extensions",
+        "Extension State",
+        "Extension Rules",
+        "Extension Scripts",
+        "Preferences",
+        "Secure Preferences",
+    ]
+    FIREFOX_FILES = [
+        "places.sqlite",
+        "logins.json",
+        "key4.db",
+        "extensions",
+        "extensions.json",
+    ]
+
+    allowed = FIREFOX_FILES if browser == "Firefox" else CHROMIUM_FILES
+
     ignore_list = []
     src_path = Path(src)
+
     for name in names:
         full_path = src_path / name
-        if full_path.is_dir():
-            continue  # Skip directories, they will be handled by shutil.copytree
-        try:
-            # try to open the file to check if it is accessible
-            with open(full_path, "rb"):
-                pass
-        except Exception:
+        pattern = (
+            FIREFOX_PROFILE_PATTERN
+            if browser == "Firefox"
+            else CHROMIUM_PROFILE_PATTERN
+        )
+        if (
+            name not in allowed
+            and not pattern.fullmatch(name)
+            and "extensions" not in str(full_path).lower()
+        ):
             ignore_list.append(name)
+            continue
+        if full_path.is_file():
+            if name not in allowed and "extensions" not in str(full_path).lower():
+                if browser == "Firefox":
+                    print(full_path)
+                ignore_list.append(name)
+                continue
+            try:
+                with open(full_path, "rb"):
+                    pass
+            except Exception:
+                ignore_list.append(name)
 
     return ignore_list
 

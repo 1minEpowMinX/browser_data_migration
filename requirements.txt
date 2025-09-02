@@ -1,3 +1,4 @@
-psutil
-lz4
-rich
+lz4==4.4.4
+psutil==7.0.0
+regex==2025.9.1
+rich==14.1.0
